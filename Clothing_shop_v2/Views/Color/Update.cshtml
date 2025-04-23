@@ -1,0 +1,76 @@
+﻿@model Clothing_shop_v2.VModels.ColorUpdateVModel
+
+@{
+    ViewData["Title"] = "Cập nhật màu";
+    Layout = "_LayoutAdmin";
+}
+
+<h2>Tạo màu mới</h2>
+
+<form asp-action="Update" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="ColorName" class="form-label">Tên màu</label>
+        <input asp-for="ColorName" class="form-control" />
+        <span asp-validation-for="ColorName" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ColorCode" class="form-label">Mã màu</label>
+        <div class="input-group">
+            <input asp-for="ColorCode" class="form-control colorpicker" readonly />
+            <span class="input-group-text"><i class="fas fa-square" id="color-preview"></i></span>
+        </div>
+        <span asp-validation-for="ColorCode" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+
+    <style>
+        .colorpicker {
+            border-radius: 4px 0 0 4px; /* Bo góc bên trái */
+        }
+
+        #color-preview {
+            color: #000000; /* Màu mặc định */
+            font-size: 1.2rem;
+        }
+
+        .input-group-text {
+            background-color: #fff;
+            border-left: 0;
+            border-radius: 0 4px 4px 0; /* Bo góc bên phải */
+        }
+
+        .colorpicker[readonly] {
+            background-color: #f8f9fa; /* Nền nhạt khi readonly */
+            cursor: pointer; /* Con trỏ chuột như nút */
+        }
+    </style>
+
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script>
+            $(document).ready(function () {
+                $('.colorpicker').colorpicker({
+                    format: 'hex', // Định dạng mã màu hex
+                    colorSelectors: { // Danh sách mã màu cố định
+                        '#FF0000': 'Đỏ',
+                        '#00FF00': 'Xanh lá',
+                        '#0000FF': 'Xanh dương',
+                        '#FFFF00': 'Vàng',
+                        '#000000': 'Đen',
+                        '#FFFFFF': 'Trắng'
+                    },
+                    autoInputFallback: true // Tự động cập nhật input
+                }).on('colorpickerChange', function (e) {
+                    $('#color-preview').css('color', e.color.toString());
+                });
+
+                // Cập nhật preview khi load
+                $('#color-preview').css('color', $('.colorpicker').val() || '#000000');
+            });
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap-colorpicker@3.4.0/dist/js/bootstrap-colorpicker.min.js"></script>
+}

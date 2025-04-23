@@ -1,0 +1,21 @@
+﻿@model List<Clothing_shop_v2.Models.Category>
+@{
+    ViewData["Title"] = "Clothing Shop";
+    Layout = "_Layout";
+}
+
+
+<!-- Featured -->
+@await Html.PartialAsync("_Featured")
+
+<!-- Categories -->
+@await Html.PartialAsync("_Categories", Model)
+
+<!-- Offers -->
+@await Html.PartialAsync("_Offer")
+
+<!-- Products -->
+@await Html.PartialAsync("_Product")
+
+<!-- Subscribe -->
+@await Html.PartialAsync("_Subscribe")

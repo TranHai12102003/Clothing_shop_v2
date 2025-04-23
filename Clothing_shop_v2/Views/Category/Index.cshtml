@@ -1,0 +1,182 @@
+﻿@model Clothing_shop_v2.VModels.CategoryListViewModel
+
+@{
+    ViewData["Title"] = "Danh sách danh mục";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="card-body">
+    <!-- Hiển thị thông báo thành công hoặc lỗi -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="flex-wrap">
+        <a asp-action="Create" class="btn btn-primary mb-3">+ Thêm danh mục mới</a>
+        <!-- Form tìm kiếm -->
+        <form asp-action="Index" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+            <div class="input-group">
+                <input type="text" name="searchString" value="@Model.SearchString" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button onclick="this.closest('form').submit();" class="btn btn-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    @if (!string.IsNullOrEmpty(Model.SearchString))
+                    {
+                        <a asp-action="Index" class="btn btn-secondary ms-2">Xóa bộ lọc</a>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+    <h2>Danh sách danh mục</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên danh mục</th>
+                <th>Danh mục cha</th>
+                <th>Hình ảnh</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model.Categories)
+            {
+                <tr>
+                    <td>@category.Id</td>
+                    <td>@category.CategoryName</td>
+                    <td>@(category.ParentCategory != null ? category.ParentCategory.CategoryName : "Không có")</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(category.ImageUrl))
+                        {
+                            <img src="@category.ImageUrl" width="100" />
+                        }
+                    </td>
+                    <td>
+                        @if (category.IsActive)
+                        {
+                            <span class="badge bg-success">Hiển thị</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Ẩn</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Update" asp-route-id="@category.Id" class="btn btn-warning btn-sm">Sửa</a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@category.Id">
+                            Xóa
+                        </button>
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal-@category.Id" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title">Xác nhận xóa</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn chắc chắn muốn xóa danh mục "@category.CategoryName"?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <form asp-action="Delete" method="post">
+                                            <input type="hidden" name="id" value="@category.Id" />
+                                            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <!-- Trang trước -->
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString"><i class="fa-solid fa-arrow-left"></i></a>
+            </li>
+
+            <!-- Số trang -->
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString">@i</a>
+                </li>
+            }
+
+            <!-- Trang sau -->
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString"><i class="fa-solid fa-arrow-right"></i></a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-center">
+        <p>Trang @Model.PageNumber / @Model.TotalPages (Tổng cộng @Model.TotalItems danh mục)</p>
+    </div>
+</div>
+
+<style>
+    .pagination .page-link {
+        color: #007bff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+    }
+
+    .search-container {
+        max-width: 500px;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-input {
+        padding-right: 40px; /* Để lại khoảng trống cho biểu tượng */
+        border-radius: 4px;
+    }
+
+    .search-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+        font-size: 1.2rem;
+    }
+
+        .search-icon:hover {
+            color: #007bff;
+        }
+
+    .input-group {
+        align-items: center;
+    }
+</style>

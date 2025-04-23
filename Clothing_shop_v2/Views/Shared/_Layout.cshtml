@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>@ViewData["Title"] - EShopper</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Các thẻ meta và CSS -->
+    @await Html.PartialAsync("_Styles")
+</head>
+<body>
+    <!-- Topbar -->
+    @await Html.PartialAsync("_Topbar")
+
+    <!-- Navbar -->
+    @await Html.PartialAsync("_Navbar")
+
+    <!-- Main Content -->
+    @RenderBody()
+
+    <!-- Footer -->
+    @await Html.PartialAsync("_Footer")
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <!-- Scripts -->
+    @await Html.PartialAsync("_Scripts")
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

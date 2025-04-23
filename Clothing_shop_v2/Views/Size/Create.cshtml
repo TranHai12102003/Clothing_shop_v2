@@ -1,0 +1,22 @@
+﻿@model Clothing_shop_v2.Models.Size
+
+@{
+    ViewData["Title"] = "Tạo kích thước mới";
+    Layout = "_LayoutAdmin";
+}
+
+<h2>Tạo kích thước mới</h2>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="SizeName" class="form-label">Tên kích thước</label>
+        <input asp-for="SizeName" class="form-control" />
+        <span asp-validation-for="SizeName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Tạo</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

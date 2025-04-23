@@ -1,0 +1,501 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\Clothing_shop_v2.bundle.scp.css",
+      "PackagePath": "staticwebassets\\Clothing_shop_v2.a378pjgxmw.bundle.scp.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\css\\all.min.css",
+      "PackagePath": "staticwebassets\\css\\all.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\css\\dataTables.bootstrap4.css",
+      "PackagePath": "staticwebassets\\css\\dataTables.bootstrap4.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\css\\dataTables.bootstrap4.min.css",
+      "PackagePath": "staticwebassets\\css\\dataTables.bootstrap4.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\css\\sb-admin-2.css",
+      "PackagePath": "staticwebassets\\css\\sb-admin-2.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\css\\sb-admin-2.min.css",
+      "PackagePath": "staticwebassets\\css\\sb-admin-2.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\css\\style.css",
+      "PackagePath": "staticwebassets\\css\\style.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\css\\style.min.css",
+      "PackagePath": "staticwebassets\\css\\style.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\carousel-1.jpg",
+      "PackagePath": "staticwebassets\\img\\carousel-1.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\carousel-2.jpg",
+      "PackagePath": "staticwebassets\\img\\carousel-2.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\cat-1.jpg",
+      "PackagePath": "staticwebassets\\img\\cat-1.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\cat-2.jpg",
+      "PackagePath": "staticwebassets\\img\\cat-2.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\cat-3.jpg",
+      "PackagePath": "staticwebassets\\img\\cat-3.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\cat-4.jpg",
+      "PackagePath": "staticwebassets\\img\\cat-4.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\cat-5.jpg",
+      "PackagePath": "staticwebassets\\img\\cat-5.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\cat-6.jpg",
+      "PackagePath": "staticwebassets\\img\\cat-6.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\offer-1.png",
+      "PackagePath": "staticwebassets\\img\\offer-1.png"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\offer-2.png",
+      "PackagePath": "staticwebassets\\img\\offer-2.png"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\payments.png",
+      "PackagePath": "staticwebassets\\img\\payments.png"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-1.jpg",
+      "PackagePath": "staticwebassets\\img\\product-1.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-2.jpg",
+      "PackagePath": "staticwebassets\\img\\product-2.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-3.jpg",
+      "PackagePath": "staticwebassets\\img\\product-3.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-4.jpg",
+      "PackagePath": "staticwebassets\\img\\product-4.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-5.jpg",
+      "PackagePath": "staticwebassets\\img\\product-5.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-6.jpg",
+      "PackagePath": "staticwebassets\\img\\product-6.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-7.jpg",
+      "PackagePath": "staticwebassets\\img\\product-7.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\product-8.jpg",
+      "PackagePath": "staticwebassets\\img\\product-8.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\user.jpg",
+      "PackagePath": "staticwebassets\\img\\user.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-1.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-1.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-2.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-2.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-3.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-3.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-4.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-4.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-5.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-5.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-6.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-6.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-7.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-7.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\img\\vendor-8.jpg",
+      "PackagePath": "staticwebassets\\img\\vendor-8.jpg"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\Chart.min.js",
+      "PackagePath": "staticwebassets\\js\\Chart.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\chart-area-demo.js",
+      "PackagePath": "staticwebassets\\js\\chart-area-demo.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\chart-bar-demo.js",
+      "PackagePath": "staticwebassets\\js\\chart-bar-demo.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\chart-pie-demo.js",
+      "PackagePath": "staticwebassets\\js\\chart-pie-demo.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\dataTables.bootstrap4.js",
+      "PackagePath": "staticwebassets\\js\\dataTables.bootstrap4.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\dataTables.bootstrap4.min.js",
+      "PackagePath": "staticwebassets\\js\\dataTables.bootstrap4.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\datatables-demo.js",
+      "PackagePath": "staticwebassets\\js\\datatables-demo.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\jquery.dataTables.js",
+      "PackagePath": "staticwebassets\\js\\jquery.dataTables.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\jquery.dataTables.min.js",
+      "PackagePath": "staticwebassets\\js\\jquery.dataTables.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\main.js",
+      "PackagePath": "staticwebassets\\js\\main.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\sb-admin-2.js",
+      "PackagePath": "staticwebassets\\js\\sb-admin-2.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\js\\sb-admin-2.min.js",
+      "PackagePath": "staticwebassets\\js\\sb-admin-2.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\bootstrap"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\easing\\easing.js",
+      "PackagePath": "staticwebassets\\lib\\easing\\easing.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\easing\\easing.min.js",
+      "PackagePath": "staticwebassets\\lib\\easing\\easing.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\ajax-loader.gif",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\ajax-loader.gif"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\owl.carousel.css",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\owl.carousel.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\owl.carousel.min.css",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\owl.carousel.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\owl.theme.default.css",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\owl.theme.default.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\owl.theme.default.min.css",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\owl.theme.default.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\owl.theme.green.css",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\owl.theme.green.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\owl.theme.green.min.css",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\owl.theme.green.min.css"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\assets\\owl.video.play.png",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\assets\\owl.video.play.png"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\owl.carousel.js",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\owl.carousel.js"
+    },
+    {
+      "Id": "D:\\Clothing_shop_v2\\Clothing_shop_v2\\wwwroot\\lib\\owlcarousel\\owl.carousel.min.js",
+      "PackagePath": "staticwebassets\\lib\\owlcarousel\\owl.carousel.min.js"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Clothing_shop_v2.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.Clothing_shop_v2.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.Clothing_shop_v2.props",
+      "PackagePath": "build\\Clothing_shop_v2.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.Clothing_shop_v2.props",
+      "PackagePath": "buildMultiTargeting\\Clothing_shop_v2.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.Clothing_shop_v2.props",
+      "PackagePath": "buildTransitive\\Clothing_shop_v2.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

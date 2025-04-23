@@ -1,0 +1,94 @@
+﻿@model Clothing_shop_v2.VModels.CategoryUpdateVModel
+
+@{
+    ViewData["Title"] = "Cập nhật danh mục";
+    Layout = "_LayoutAdmin";
+}
+
+<h2>Cập nhật danh mục</h2>
+<div class="container">
+    <form asp-action="Update" enctype="multipart/form-data" method="post">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedDate" />
+        <input type="hidden" asp-for="ImageUrl" /> <!-- Gửi ImageUrl cũ -->
+        <div class="form-group">
+            <label asp-for="CategoryName">Tên danh mục</label>
+            <input asp-for="CategoryName" class="form-control" />
+            <span asp-validation-for="CategoryName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ParentCategoryId">Danh mục cha (nếu có)</label>
+            <select asp-for="ParentCategoryId" class="form-control"
+                    asp-items="ViewBag.ParentCategories">
+                <option value="">-- Không chọn --</option>
+            </select>
+            <span asp-validation-for="ParentCategoryId" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="IsActive">Trạng thái</label>
+            <select asp-for="IsActive" class="form-control">
+                <option value="true" selected="@(Model.IsActive ? "selected" : null)">Hiển thị</option>
+                <option value="false" selected="@(!Model.IsActive ? "selected" : null)">Ẩn</option>
+            </select>
+            <span asp-validation-for="IsActive" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label>Ảnh danh mục</label>
+            <input type="file" name="ImageFile" class="form-control-file" onchange="previewImage(event)" />
+            <span class="text-danger">@Html.ValidationMessage("ImageFile")</span>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="image-preview-container">
+                <img id="imagePreview" class="img-fluid" src="@Model.ImageUrl" alt="Ảnh danh mục" />
+            </div>
+        }
+        else
+        {
+            <div class="image-preview-container">
+                <img id="imagePreview" class="img-fluid" src="#" alt="Ảnh xem trước" style="display:none;" />
+            </div>
+        }
+
+        <button type="submit" class="btn btn-success">Cập nhật</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function previewImage(event) {
+            var input = event.target;
+            var reader = new FileReader();
+
+            reader.onload = function () {
+                var img = document.getElementById('imagePreview');
+                img.src = reader.result;
+                img.style.display = 'block';
+            };
+
+            if (input.files && input.files[0]) {
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}
+
+    <style>
+        .image-preview-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+            .image-preview-container img {
+                max-width: 200px; /* Giới hạn chiều rộng */
+                max-height: 200px; /* Giới hạn chiều cao */
+                object-fit: cover; /* Đảm bảo ảnh không bị méo */
+                border-radius: 8px; /* Bo góc */
+                border: 1px solid #ddd; /* Viền nhẹ */
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+                display: block;
+                margin: 0 auto; /* Căn giữa */
+            }
+    </style>

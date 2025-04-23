@@ -1,0 +1,200 @@
+﻿@model Clothing_shop_v2.VModels.SizeListViewModel
+
+@{
+    ViewData["Title"] = "Danh sách kích thước";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="card-body">
+    <!-- Hiển thị thông báo thành công hoặc lỗi -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Header: Tìm kiếm và nút Thêm kích thước -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!-- Form tìm kiếm -->
+        <form asp-action="Index" method="get" class="search-container">
+            <div class="input-group">
+                <input type="text" name="searchString" value="@Model.SearchString" class="form-control search-input" placeholder="Tìm kiếm kích thước..." aria-label="Search">
+                <span class="search-icon" onclick="this.closest('form').submit();"><i class="fa-solid fa-magnifying-glass"></i></span>
+                @if (!string.IsNullOrEmpty(Model.SearchString))
+                {
+                    <a asp-action="Index" class="btn btn-secondary ms-2">Xóa bộ lọc</a>
+                }
+            </div>
+        </form>
+
+        <!-- Nút Thêm kích thước -->
+        <a asp-action="Create" class="btn btn-primary btn-create"><i class="fa-solid fa-plus"></i> Thêm kích thước</a>
+    </div>
+
+    <h2>Danh sách kích thước</h2>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên kích thước</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var size in Model.Sizes)
+            {
+                <tr>
+                    <td>@size.Id</td>
+                    <td>@size.SizeName</td>
+                    <td>
+                        <a asp-action="Update" asp-route-id="@size.Id" class="btn btn-warning btn-sm">Sửa</a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@size.Id">
+                            Xóa
+                        </button>
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal-@size.Id" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title">Xác nhận xóa</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn chắc chắn muốn xóa kích thước "@size.SizeName"?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <form asp-action="Delete" method="post">
+                                            <input type="hidden" name="id" value="@size.Id" />
+                                            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Phân trang -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <!-- Trang trước -->
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString"><i class="fa-solid fa-arrow-left"></i></a>
+            </li>
+
+            <!-- Số trang -->
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString">@i</a>
+                </li>
+            }
+
+            <!-- Trang sau -->
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString"><i class="fa-solid fa-arrow-right"></i></a>
+            </li>
+        </ul>
+    </nav>
+    <div class="text-center">
+        <p>Trang @Model.PageNumber / @Model.TotalPages (Tổng cộng @Model.TotalItems kích thước)</p>
+    </div>
+</div>
+    <style>
+        /* Phân trang */
+        .pagination .page-link {
+            color: #007bff;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+        }
+
+        /* Tìm kiếm và nút Thêm kích thước */
+        .search-container {
+            max-width: 400px; /* Giới hạn chiều rộng ô tìm kiếm */
+            position: relative;
+        }
+
+        .search-input {
+            padding-right: 40px; /* Để lại khoảng trống cho biểu tượng */
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.2s;
+        }
+
+            .search-input:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            }
+
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+            .search-icon:hover {
+                color: #007bff;
+            }
+
+        /* Nút Thêm kích thước */
+        .btn-create {
+            padding: 8px 16px;
+            font-size: 1rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+            .btn-create:hover {
+                background-color: #0056b3;
+            }
+
+            .btn-create i {
+                margin-right: 5px;
+            }
+
+        /* Responsive */
+        @@media screen and (max-width: 768px) {
+            .search-container
+
+        {
+            max-width: 100%; /* Full width trên mobile */
+            margin-bottom: 10px;
+        }
+
+        .btn-create {
+            width: 100%; /* Full width trên mobile */
+            text-align: center;
+        }
+
+        .d-flex {
+            flex-direction: column; /* Xếp dọc trên mobile */
+            align-items: stretch;
+        }
+
+    </style>

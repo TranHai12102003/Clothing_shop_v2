@@ -1,0 +1,23 @@
+﻿@model Clothing_shop_v2.Models.Size
+
+@{
+    ViewData["Title"] = "Cập nhật kích thước";
+    Layout = "_LayoutAdmin";
+}
+
+<h2>Cập nhật kích thước</h2>
+
+<form asp-action="Update" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="mb-3">
+        <label asp-for="SizeName" class="form-label">Tên kích thước</label>
+        <input asp-for="SizeName" class="form-control" />
+        <span asp-validation-for="SizeName" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

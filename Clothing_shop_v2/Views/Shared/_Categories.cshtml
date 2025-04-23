@@ -1,0 +1,21 @@
+﻿<!-- Categories Start -->
+@model List<Clothing_shop_v2.Models.Category>
+
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5 pb-3">
+        @foreach (var category in Model.Where(c => c.ParentCategoryId == null))
+        {
+            <div class="col-lg-4 col-md-6 pb-1">
+                <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px;">
+                    <p class="text-right">15 Products</p>
+                    <a href="@Url.Action("ProductsByCategory", "Product", new { id = category.Id })" class="cat-img position-relative overflow-hidden mb-3">
+                        <img class="img-fluid" src="@category.ImageUrl" alt="@category.CategoryName">
+                    </a>
+                    <h5 class="font-weight-semi-bold m-0">@category.CategoryName</h5>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Categories End -->
