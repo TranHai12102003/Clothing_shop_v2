@@ -1,0 +1,645 @@
+﻿@model Clothing_shop_v2.Models.Product
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = "_LayoutAdmin";
+}
+
+<h2>Chi tiết sản phẩm: @Model.ProductName</h2>
+
+<!-- Hiển thị thông báo -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Thông tin sản phẩm -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0">Thông tin sản phẩm</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Tên sản phẩm:</strong> @Model.ProductName</p>
+        <p><strong>Danh mục:</strong> @(Model.Category?.CategoryName ?? "-")</p>
+        <p><strong>Ngày tạo:</strong> @Model.CreatedDate.ToString("dd-MM-yyyy HH:mm")</p>
+        <p><strong>Ngày cập nhật:</strong> @(Model.UpdatedDate.HasValue ? Model.UpdatedDate.Value.ToString("dd-MM-yyyy HH:mm") : "-")</p>
+        <p><strong>Mô tả:</strong></p>
+        <div class="description-content">@Html.Raw(Model.Description)</div>
+    </div>
+</div>
+
+<!-- Danh sách biến thể -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">Danh sách biến thể</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-container">
+            <table class="table table-bordered table-hover variant-table" data-product-id="@Model.Id">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Kích thước</th>
+                        <th>Màu sắc</th>
+                        <th>Giá</th>
+                        <th>Giá khuyến mãi</th>
+                        <th>Số lượng tồn</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Variants != null && Model.Variants.Any())
+                    {
+                        foreach (var variant in Model.Variants)
+                        {
+                            <tr data-variant-id="@variant.Id">
+                                <td>@(variant.Size?.SizeName ?? "-")</td>
+                                <td>@(variant.Color?.ColorName ?? "-")</td>
+                                <td>@variant.Price.ToString("N0")</td>
+                                <td>@(variant.SalePrice.HasValue ? variant.SalePrice.Value.ToString("N0") : "-")</td>
+                                <td>@variant.QuantityInStock</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-warning edit-variant-btn me-2" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-danger delete-variant-btn" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">Không có biến thể nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Form thêm biến thể -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Thêm biến thể mới</h5>
+    </div>
+    <div class="card-body">
+        <div id="variant-error" class="variant-error" style="display: none;"></div>
+        <form class="add-variant-form" data-product-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ProductId" value="@Model.Id" />
+            <div class="row g-3">
+                <!-- Kích thước -->
+                <div class="col-md-6 col-lg-4">
+                    <label for="SizeId" class="form-label fw-medium">Kích thước <span class="text-danger">*</span></label>
+                    <select id="SizeId" name="SizeId" class="form-select" required>
+                        <option value="">Chọn kích thước</option>
+                        @foreach (var size in ViewBag.Sizes)
+                        {
+                            <option value="@size.Id">@size.SizeName</option>
+                        }
+                    </select>
+                </div>
+                <!-- Màu sắc -->
+                <div class="col-md-6 col-lg-4">
+                    <label for="ColorId" class="form-label fw-medium">Màu sắc <span class="text-danger">*</span></label>
+                    <select id="ColorId" name="ColorId" class="form-select" required>
+                        <option value="">Chọn màu sắc</option>
+                        @foreach (var color in ViewBag.Colors)
+                        {
+                            <option value="@color.Id">@color.ColorName</option>
+                        }
+                    </select>
+                </div>
+                <!-- Giá -->
+                <div class="col-md-6 col-lg-4">
+                    <label for="Price" class="form-label fw-medium">Giá <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <input type="number" id="Price" name="Price" class="form-control" step="0.01" min="0" required />
+                    </div>
+                </div>
+                <!-- Giá khuyến mãi -->
+                <div class="col-md-6 col-lg-4">
+                    <label for="SalePrice" class="form-label fw-medium">Giá khuyến mãi</label>
+                    <div class="input-group">
+                        <input type="number" id="SalePrice" name="SalePrice" class="form-control" step="0.01" min="0" />
+                    </div>
+                </div>
+                <!-- Số lượng tồn -->
+                <div class="col-md-6 col-lg-4">
+                    <label for="QuantityInStock" class="form-label fw-medium">Số lượng tồn <span class="text-danger">*</span></label>
+                    <input type="number" id="QuantityInStock" name="QuantityInStock" class="form-control" min="0" required />
+                </div>
+                <!-- Nút Thêm -->
+                <div class="col-12 col-lg-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="fas fa-plus me-2"></i>Thêm biến thể
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal chỉnh sửa biến thể -->
+<div class="modal fade" id="editVariantModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-white">
+                <h5 class="modal-title">Chỉnh sửa biến thể</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="edit-variant-error" class="variant-error" style="display: none;"></div>
+                <form class="edit-variant-form">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" />
+                    <input type="hidden" name="ProductId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Kích thước <span class="text-danger">*</span></label>
+                        <select name="SizeId" class="form-select" required>
+                            <option value="">Chọn kích thước</option>
+                            @foreach (var size in ViewBag.Sizes)
+                            {
+                                <option value="@size.Id">@size.SizeName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Màu sắc <span class="text-danger">*</span></label>
+                        <select name="ColorId" class="form-select" required>
+                            <option value="">Chọn màu sắc</option>
+                            @foreach (var color in ViewBag.Colors)
+                            {
+                                <option value="@color.Id">@color.ColorName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Giá <span class="text-danger">*</span></label>
+                        <input type="number" name="Price" class="form-control" step="0.01" min="0" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Giá khuyến mãi</label>
+                        <input type="number" name="SalePrice" class="form-control" step="0.01" min="0" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số lượng tồn <span class="text-danger">*</span></label>
+                        <input type="number" name="QuantityInStock" class="form-control" min="0" required />
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100">Cập nhật</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận xóa biến thể -->
+<div class="modal fade" id="deleteVariantModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận xóa biến thể</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa biến thể này?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-danger confirm-delete-variant">Xóa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 8px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        border-radius: 8px;
+        background-color: #fff;
+    }
+
+    .table {
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .table th, .table td {
+            vertical-align: middle;
+            padding: 12px;
+            border-color: #dee2e6;
+        }
+
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+            .table tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+    .description-content {
+        max-height: none;
+        overflow: visible;
+    }
+
+        .description-content img {
+            max-width: 100px;
+            max-height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+    .btn-sm {
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        line-height: 1;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        border-color: #ffc107;
+        color: #212529;
+    }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
+        }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        color: #fff;
+    }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+
+    .alert {
+        border-radius: 6px;
+        font-size: 0.95rem;
+        padding: 12px 20px;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .variant-error {
+        margin-bottom: 15px;
+    }
+
+        .variant-error .alert {
+            margin-bottom: 5px;
+        }
+
+    /* Style cho Form Thêm biến thể */
+    .add-variant-form .form-label {
+        font-size: 0.95rem;
+        color: #343a40;
+        margin-bottom: 0.5rem;
+    }
+
+    .add-variant-form .form-select,
+    .add-variant-form .form-control {
+        border-radius: 6px;
+        border-color: #ced4da;
+        padding: 0.65rem 0.75rem;
+        font-size: 0.95rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .add-variant-form .form-select:focus,
+        .add-variant-form .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+
+    .add-variant-form .input-group-text {
+        background-color: #f8f9fa;
+        border-color: #ced4da;
+        color: #6c757d;
+        border-radius: 6px 0 0 6px;
+    }
+
+    .add-variant-form .btn-primary {
+        border-radius: 6px;
+        font-size: 0.95rem;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+
+        .add-variant-form .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+    @@media screen and (max-width: 768px) {
+        .table th, .table td {
+            padding: 8px;
+            font-size: 0.9rem;
+        }
+
+        .description-content img {
+            max-width: 80px;
+            max-height: 40px;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+
+        .me-2 {
+            margin-right: 0.25rem !important;
+        }
+
+        .add-variant-form .form-label {
+            font-size: 0.9rem;
+        }
+
+        .add-variant-form .form-select,
+        .add-variant-form .form-control {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .add-variant-form .btn-primary {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+    }
+
+    @@media screen and (max-width: 576px) {
+        .add-variant-form .form-label {
+            font-size: 0.85rem;
+        }
+
+        .add-variant-form .form-select,
+        .add-variant-form .form-control {
+            font-size: 0.85rem;
+        }
+
+        .add-variant-form .btn-primary {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+
+@section Scripts {
+    <script>
+        const sizes = @Json.Serialize(ViewBag.Sizes);
+        const colors = @Json.Serialize(ViewBag.Colors);
+
+        function getSizeName(sizeId) {
+            const size = sizes.find(s => s.id === parseInt(sizeId));
+            return size ? size.sizeName : '-';
+        }
+
+        function getColorName(colorId) {
+            const color = colors.find(c => c.id === parseInt(colorId));
+            return color ? color.colorName : '-';
+        }
+
+        // Tự động ẩn thông báo
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                setTimeout(() => bootstrap.Alert.getOrCreateInstance(alert).close(), 3000);
+            });
+
+            // Thêm biến thể
+            document.querySelector('.add-variant-form').addEventListener('submit', async e => {
+                console.log("Thêm biến thể được gọi");
+                e.preventDefault();
+                const productId = e.target.getAttribute('data-product-id');
+                const table = document.querySelector(`.variant-table[data-product-id="${productId}"] tbody`);
+                const errorDiv = document.getElementById('variant-error');
+                const btn = e.target.querySelector('button[type="submit"]');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang thêm...';
+                errorDiv.style.display = 'none';
+                errorDiv.innerHTML = '';
+
+                try {
+                    const response = await fetch('/Variant/AddVariant', {
+                        method: 'POST',
+                        body: new FormData(e.target),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await response.json();
+                    console.log("Phản hồi từ server:", data);
+                    if (data.success) {
+                        const v = data.variant;
+                        const row = `<tr data-variant-id="${v.id}">
+                            <td>${getSizeName(v.sizeId)}</td>
+                            <td>${getColorName(v.colorId)}</td>
+                            <td>${parseFloat(v.price).toLocaleString('vi-VN')}</td>
+                            <td>${v.salePrice ? parseFloat(v.salePrice).toLocaleString('vi-VN') : '-'}</td>
+                            <td>${v.quantityInStock}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-warning edit-variant-btn me-2" title="Chỉnh sửa"><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger delete-variant-btn" title="Xóa"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                        table.querySelector('tr td[colspan="6"]') ? table.innerHTML = row : table.insertAdjacentHTML('beforeend', row);
+                        showAlert(data.message, 'success');
+                        e.target.reset();
+                    } else {
+                        errorDiv.style.display = 'block';
+                        errorDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>${data.message || 'Có lỗi xảy ra.'}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>`;
+                        if (data.errors) {
+                            data.errors.forEach(error => {
+                                errorDiv.innerHTML += `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>${error}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>`;
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Lỗi:", error);
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>Đã có lỗi xảy ra.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>`;
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Thêm';
+                }
+            });
+
+            // Chỉnh sửa biến thể
+            document.addEventListener('click', e => {
+                if (e.target.closest('.edit-variant-btn')) {
+                    const row = e.target.closest('tr');
+                    const modal = document.getElementById('editVariantModal');
+                    const form = modal.querySelector('.edit-variant-form');
+                    const errorDiv = document.getElementById('edit-variant-error');
+                    errorDiv.style.display = 'none';
+                    errorDiv.innerHTML = '';
+                    form.querySelector('input[name="Id"]').value = row.getAttribute('data-variant-id');
+                    form.querySelector('select[name="SizeId"]').value = [...form.querySelectorAll('select[name="SizeId"] option')]
+                        .find(opt => opt.textContent === row.cells[0].textContent)?.value || '';
+                    form.querySelector('select[name="ColorId"]').value = [...form.querySelectorAll('select[name="ColorId"] option')]
+                        .find(opt => opt.textContent === row.cells[1].textContent)?.value || '';
+                    form.querySelector('input[name="Price"]').value = row.cells[2].textContent.replace(/[^0-9.-]+/g, '');
+                    form.querySelector('input[name="SalePrice"]').value = row.cells[3].textContent === '-' ? '' : row.cells[3].textContent.replace(/[^0-9.-]+/g, '');
+                    form.querySelector('input[name="QuantityInStock"]').value = row.cells[4].textContent;
+                    bootstrap.Modal.getOrCreateInstance(modal).show();
+                }
+            });
+
+            // Xử lý form chỉnh sửa
+            document.querySelector('.edit-variant-form').addEventListener('submit', async e => {
+                console.log("Chỉnh sửa biến thể được gọi");
+                e.preventDefault();
+                const btn = e.target.querySelector('button[type="submit"]');
+                const errorDiv = document.getElementById('edit-variant-error');
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>đang cập nhật...';
+                errorDiv.style.display = 'none';
+                errorDiv.innerHTML = '';
+
+                try {
+                    const response = await fetch('/Variant/UpdateVariant', {
+                        method: 'POST',
+                        body: new FormData(e.target),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await response.json();
+                    console.log("Phản hồi từ server:", data);
+                    if (data.success) {
+                        const v = data.variant;
+                        const row = document.querySelector(`tr[data-variant-id="${v.id}"]`);
+                        row.cells[0].textContent = getSizeName(v.sizeId);
+                        row.cells[1].textContent = getColorName(v.colorId);
+                        row.cells[2].textContent = parseFloat(v.price).toLocaleString('vi-VN');
+                        row.cells[3].textContent = v.salePrice ? parseFloat(v.salePrice).toLocaleString('vi-VN') : '-';
+                        row.cells[4].textContent = v.quantityInStock;
+                        showAlert(data.message, 'success');
+                        bootstrap.Modal.getInstance(document.getElementById('editVariantModal')).hide();
+                    } else {
+                        errorDiv.style.display = 'block';
+                        errorDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>${data.message || 'Có lỗi xảy ra.'}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>`;
+                        if (data.errors) {
+                            data.errors.forEach(error => {
+                                errorDiv.innerHTML += `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>${error}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>`;
+                            });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Lỗi:", error);
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>Đã có lỗi xảy ra.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>`;
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Cập nhật';
+                }
+            });
+
+            // Xóa biến thể
+            document.addEventListener('click', e => {
+                if (e.target.closest('.delete-variant-btn')) {
+                    const row = e.target.closest('tr');
+                    const modal = document.getElementById('deleteVariantModal');
+                    modal.querySelector('.confirm-delete-variant').setAttribute('data-variant-id', row.getAttribute('data-variant-id'));
+                    bootstrap.Modal.getOrCreateInstance(modal).show();
+                }
+            });
+
+            // Xác nhận xóa
+            document.querySelector('.confirm-delete-variant').addEventListener('click', async function () {
+                console.log("Xóa biến thể được gọi");
+                const variantId = this.getAttribute('data-variant-id');
+                const row = document.querySelector(`tr[data-variant-id="${variantId}"]`);
+                const table = row.closest('tbody');
+                const modal = document.getElementById('deleteVariantModal');
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xóa...';
+
+                try {
+                    const response = await fetch('/Variant/DeleteVariant', {
+                        method: 'POST',
+                        body: new URLSearchParams({ 'id': variantId, '__RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value }),
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/x-www-form-urlencoded' }
+                    });
+                    const data = await response.json();
+                    console.log("Phản hồi từ server:", data);
+                    if (data.success) {
+                        row.remove();
+                        if (!table.querySelector('tr')) table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Không có biến thể nào.</td></tr>';
+                        showAlert(data.message, 'success');
+                        bootstrap.Modal.getInstance(modal).hide();
+                    } else {
+                        showAlert(data.message || 'Có lỗi xảy ra.', 'danger');
+                    }
+                } catch (error) {
+                    console.error("Lỗi:", error);
+                    showAlert('Đã có lỗi xảy ra.', 'danger');
+                } finally {
+                    this.disabled = false;
+                    this.innerHTML = 'Xóa';
+                }
+            });
+
+            // Hàm hiển thị thông báo
+            function showAlert(message, type) {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-dismissible fade show`;
+                alert.role = 'alert';
+                alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+                document.querySelector('h2').insertAdjacentElement('afterend', alert);
+                setTimeout(() => bootstrap.Alert.getOrCreateInstance(alert).close(), 3000);
+            }
+        });
+    </script>
+}
