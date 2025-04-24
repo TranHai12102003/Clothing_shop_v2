@@ -158,5 +158,29 @@ namespace Clothing_shop_v2.Controllers
             }
             return RedirectToAction("Index");
         }
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var product = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Variants)
+                .ThenInclude(v => v.Color)
+                .Include(p => p.Variants)
+                .ThenInclude(v => v.Size)
+                .FirstOrDefault(p => p.Id == id);
+            if (product == null)
+            {
+                TempData["ErrorMessage"] = "Sản phẩm không tồn tại.";
+                return RedirectToAction("Index");
+            }
+            // Lấy danh sách Sizes và Colors để sử dụng trong form thêm biến thể
+            ViewBag.Sizes = await _context.Sizes
+                .Select(s => new { s.Id, s.SizeName })
+                .ToListAsync();
+            ViewBag.Colors = await _context.Colors
+                .Select(c => new { c.Id, c.ColorName })
+                .ToListAsync();
+            return View(product);
+        }
     }
 }
