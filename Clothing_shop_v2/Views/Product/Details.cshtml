@@ -29,12 +29,32 @@
         <h5 class="mb-0">Thông tin sản phẩm</h5>
     </div>
     <div class="card-body">
-        <p><strong>Tên sản phẩm:</strong> @Model.ProductName</p>
-        <p><strong>Danh mục:</strong> @(Model.Category?.CategoryName ?? "-")</p>
-        <p><strong>Ngày tạo:</strong> @Model.CreatedDate.ToString("dd-MM-yyyy HH:mm")</p>
-        <p><strong>Ngày cập nhật:</strong> @(Model.UpdatedDate.HasValue ? Model.UpdatedDate.Value.ToString("dd-MM-yyyy HH:mm") : "-")</p>
-        <p><strong>Mô tả:</strong></p>
-        <div class="description-content">@Html.Raw(Model.Description)</div>
+        <div class="row">
+            <!-- Cột hiển thị ảnh -->
+            <div class="col-md-4">
+                <p><strong>Ảnh chính:</strong></p>
+                @{
+                    var primaryImage = Model.ProductImages?.FirstOrDefault(pi => pi.IsPrimary) ?? Model.ProductImages?.FirstOrDefault();
+                    if (primaryImage != null && !string.IsNullOrEmpty(primaryImage.ImageUrl))
+                    {
+                        <img src="@primaryImage.ImageUrl" alt="@Model.ProductName" class="product-image mb-3" loading="lazy" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có ảnh</span>
+                    }
+                }
+            </div>
+            <!-- Cột hiển thị thông tin -->
+            <div class="col-md-8">
+                <p><strong>Tên sản phẩm:</strong> @Model.ProductName</p>
+                <p><strong>Danh mục:</strong> @(Model.Category?.CategoryName ?? "-")</p>
+                <p><strong>Ngày tạo:</strong> @Model.CreatedDate.ToString("dd-MM-yyyy HH:mm")</p>
+                <p><strong>Ngày cập nhật:</strong> @(Model.UpdatedDate.HasValue ? Model.UpdatedDate.Value.ToString("dd-MM-yyyy HH:mm") : "-")</p>
+                <p><strong>Mô tả:</strong></p>
+                <div class="description-content">@Html.Raw(Model.Description)</div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -274,6 +294,15 @@
             border-radius: 4px;
         }
 
+    .product-image {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+    }
+
     .btn-sm {
         padding: 6px 12px;
         border-radius: 4px;
@@ -380,6 +409,10 @@
             max-height: 40px;
         }
 
+        .product-image {
+            max-width: 150px;
+        }
+
         .btn-sm {
             padding: 4px 8px;
             font-size: 0.85rem;
@@ -406,6 +439,10 @@
     }
 
     @@media screen and (max-width: 576px) {
+        .product-image {
+            max-width: 120px;
+        }
+
         .add-variant-form .form-label {
             font-size: 0.85rem;
         }
@@ -420,7 +457,6 @@
         }
     }
 </style>
-
 
 @section Scripts {
     <script>
@@ -480,7 +516,8 @@
                         table.querySelector('tr td[colspan="6"]') ? table.innerHTML = row : table.insertAdjacentHTML('beforeend', row);
                         showAlert(data.message, 'success');
                         e.target.reset();
-                    } else {
+                    }
+                    else {
                         errorDiv.style.display = 'block';
                         errorDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <i class="fas fa-exclamation-circle me-2"></i>${data.message || 'Có lỗi xảy ra.'}

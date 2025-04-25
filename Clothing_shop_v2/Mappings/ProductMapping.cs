@@ -1,5 +1,6 @@
 ﻿using Clothing_shop_v2.Models;
 using Clothing_shop_v2.VModels;
+using Shopapp.Mappings;
 
 namespace Clothing_shop_v2.Mappings
 {
@@ -7,7 +8,7 @@ namespace Clothing_shop_v2.Mappings
     {
         public static ProductGetVModel EntityToVModel(Product product)
         {
-            return new ProductGetVModel
+            var vmodel = new ProductGetVModel
             {
                 Id = product.Id,
                 ProductName = product.ProductName,
@@ -16,6 +17,15 @@ namespace Clothing_shop_v2.Mappings
                 CreatedDate = product.CreatedDate,
                 UpdatedDate = product.UpdatedDate,
             };
+            if(product.Category != null)
+            {
+                vmodel.Category = CategoryMapping.EntityToVModel(product.Category);
+            }
+            if(product.ProductImages != null && product.ProductImages.Count > 0)
+            {
+                vmodel.PrimaryImageUrl = product.ProductImages.FirstOrDefault()?.ImageUrl ?? string.Empty; // Lấy ảnh đầu tiên làm ảnh chính
+            }
+            return vmodel;
         }
         public static Product VModelToEntity(ProductCreateVModel productVModel)
         {

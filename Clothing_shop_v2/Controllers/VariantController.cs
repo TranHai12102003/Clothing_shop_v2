@@ -28,6 +28,16 @@ namespace Clothing_shop_v2.Controllers
                 return Json(new { success = false, message = "Dữ liệu không hợp lệ.", errors });
             }
 
+            // Ràng buộc: Giá khuyến mãi phải nhỏ hơn giá gốc (nếu có giá khuyến mãi)
+            if (model.SalePrice.HasValue && model.SalePrice >= model.Price)
+            {
+                return Json(new { success = false, message = "Giá khuyến mãi phải nhỏ hơn giá gốc." });
+            }
+            if(model.QuantityInStock < 0)
+            {
+                return Json(new { success = false, message = "Số lượng tồn không được âm." });
+            }
+
             // Kiểm tra xem đã tồn tại biến thể với SizeId và ColorId này chưa
             var existingVariant = await _context.Variants
                 .FirstOrDefaultAsync(v => v.ProductId == model.ProductId && v.SizeId == model.SizeId && v.ColorId == model.ColorId);
