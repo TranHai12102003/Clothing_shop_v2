@@ -13,7 +13,24 @@
                     <h2 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Tạo sản phẩm mới</h2>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <!-- Thông báo thành công -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Create" method="post" enctype="multipart/form-data" id="productForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="mb-3">
                             <label asp-for="ProductName" class="form-label fw-bold text-muted">
                                 Tên sản phẩm <span class="text-danger">*</span>
@@ -37,6 +54,15 @@
                             </select>
                             <span asp-validation-for="CategoryId" class="text-danger"></span>
                         </div>
+                        <!-- Trường tải lên hình ảnh -->
+                        <div class="mb-3">
+                            <label asp-for="imageFiles" class="form-label fw-bold text-muted">
+                                Hình ảnh sản phẩm <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="imageFiles" class="form-control" multiple accept="image/*" required />
+                            <span asp-validation-for="imageFiles" class="text-danger"></span>
+                            <div id="imagePreview" class="row mt-3"></div>
+                        </div>
                         <div class="d-flex">
                             <button type="submit" class="btn btn-primary btn-custom">
                                 <i class="fas fa-save me-2"></i>Tạo
@@ -52,142 +78,230 @@
     </div>
 </div>
 
-    <style>
-        .card {
-            border-radius: 10px;
-            overflow: hidden;
+<!-- CSS và Scripts giữ nguyên như trước -->
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 15px 20px;
+        border-bottom: none;
+    }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
-        .card-header {
-            padding: 15px 20px;
-            border-bottom: none;
+    .card-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
         }
 
-            .card-header h2 {
-                font-size: 1.5rem;
-                font-weight: 600;
-            }
+    .btn-custom {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: background-color 0.2s, transform 0.1s;
+    }
 
+    .btn-primary.btn-custom {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary.btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+    .btn-secondary.btn-custom {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+        .btn-secondary.btn-custom:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+    /* CKEditor */
+    .ck-editor__editable {
+        min-height: 250px;
+        border: 1px solid #ced4da !important;
+        border-radius: 6px !important;
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+
+    .ck.ck-toolbar {
+        border: 1px solid #ced4da !important;
+        border-radius: 6px 6px 0 0 !important;
+        background-color: #f8f9fa;
+    }
+
+    .ck.ck-button, .ck.ck-button.ck-on {
+        border-radius: 4px;
+        margin: 2px;
+        transition: background-color 0.2s;
+    }
+
+        .ck.ck-button:hover {
+            background-color: #e9ecef;
+        }
+
+    .d-flex {
+        gap: 10px;
+    }
+
+    /* Image Preview */
+    #imagePreview .preview-image {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    #imagePreview img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
+
+    #imagePreview .remove-image {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        #imagePreview .remove-image:hover {
+            background-color: #c82333;
+        }
+
+    /* Responsive */
+    @@media screen and (max-width: 768px) {
         .card-body {
-            padding: 30px;
+            padding: 20px;
         }
 
         .form-label {
-            font-size: 0.95rem;
-            margin-bottom: 8px;
+            font-size: 0.9rem;
         }
 
         .form-control, .form-select {
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            padding: 10px 15px;
-            font-size: 0.95rem;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            padding: 8px 12px;
+            font-size: 0.9rem;
         }
-
-            .form-control:focus, .form-select:focus {
-                border-color: #007bff;
-                box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
-            }
 
         .btn-custom {
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: background-color 0.2s, transform 0.1s;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            width: 100%;
         }
 
-        .btn-primary.btn-custom {
-            background-color: #007bff;
-            border-color: #007bff;
+        .d-flex {
+            flex-direction: column;
+            gap: 12px !important;
         }
 
-            .btn-primary.btn-custom:hover {
-                background-color: #0056b3;
-                border-color: #0056b3;
-                transform: translateY(-1px);
-            }
-
-        .btn-secondary.btn-custom {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
-
-            .btn-secondary.btn-custom:hover {
-                background-color: #5a6268;
-                border-color: #5a6268;
-                transform: translateY(-1px);
-            }
-        /* CKEditor */
         .ck-editor__editable {
-            min-height: 250px;
-            border: 1px solid #ced4da !important;
-            border-radius: 6px !important;
-            padding: 10px;
-            font-size: 0.95rem;
+            min-height: 200px;
         }
 
         .ck.ck-toolbar {
-            border: 1px solid #ced4da !important;
-            border-radius: 6px 6px 0 0 !important;
-            background-color: #f8f9fa;
+            font-size: 0.9rem;
         }
 
-        .ck.ck-button, .ck.ck-button.ck-on {
-            border-radius: 4px;
-            margin: 2px;
-            transition: background-color 0.2s;
+        #imagePreview img {
+            height: 120px;
         }
-
-            .ck.ck-button:hover {
-                background-color: #e9ecef;
-            }
-
-            .d-flex{
-                gap:10px;
-            }
-        /* Responsive */
-        @@media screen and (max-width: 768px) {
-            .card-body {
-                padding: 20px;
-            }
-
-            .form-label {
-                font-size: 0.9rem;
-            }
-
-            .form-control, .form-select {
-                padding: 8px 12px;
-                font-size: 0.9rem;
-            }
-
-            .btn-custom {
-                padding: 8px 16px;
-                font-size: 0.9rem;
-                width: 100%;
-            }
-
-            .d-flex {
-                flex-direction: column;
-                gap: 12px !important; /* Khoảng cách trên mobile */
-            }
-
-            .ck-editor__editable {
-                min-height: 200px;
-            }
-
-            .ck.ck-toolbar {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
-
+    }
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
     <script>
+        // Xử lý preview hình ảnh
+        document.querySelector('input[name="imageFiles"]').addEventListener('change', function (e) {
+            const files = e.target.files;
+            const previewContainer = document.getElementById('imagePreview');
+            previewContainer.innerHTML = ''; // Xóa các preview cũ
+
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'col-md-4 preview-image';
+                    previewDiv.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview">
+                        <button type="button" class="remove-image" data-index="${index}">×</button>
+                    `;
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        // Xử lý xóa hình ảnh preview
+        document.getElementById('imagePreview').addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-image')) {
+                const index = e.target.getAttribute('data-index');
+                const fileInput = document.querySelector('input[name="imageFiles"]');
+                const dataTransfer = new DataTransfer();
+
+                // Tạo lại danh sách file sau khi xóa
+                Array.from(fileInput.files).forEach((file, i) => {
+                    if (i != index) {
+                        dataTransfer.items.add(file);
+                    }
+                });
+
+                fileInput.files = dataTransfer.files;
+                e.target.parentElement.remove();
+
+                // Cập nhật lại chỉ số của các nút xóa
+                document.querySelectorAll('.remove-image').forEach((btn, i) => {
+                    btn.setAttribute('data-index', i);
+                });
+            }
+        });
+
+        // Khởi tạo CKEditor
         ClassicEditor
             .create(document.querySelector('#description'), {
                 toolbar: [
@@ -245,7 +359,6 @@
                 }
             })
             .then(editor => {
-                // Đảm bảo validation hoạt động
                 editor.model.document.on('change:data', () => {
                     editor.updateSourceElement();
                 });

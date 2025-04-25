@@ -1,5 +1,6 @@
-using Clothing_shop_v2.Helpers;
+﻿using Clothing_shop_v2.Helpers;
 using Clothing_shop_v2.Models;
+using Clothing_shop_v2.Services;
 using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +18,9 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
     cloudinarySettings.ApiKey,
     cloudinarySettings.ApiSecret
 )));
+
+// Đăng ký ProductImageService
+builder.Services.AddScoped<IProductImageService, ProductImageService>();
 
 var app = builder.Build();
 

@@ -1,5 +1,6 @@
 ﻿using Clothing_shop_v2.Mappings;
 using Clothing_shop_v2.Models;
+using Clothing_shop_v2.Services;
 using Clothing_shop_v2.VModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,15 +11,18 @@ namespace Clothing_shop_v2.Controllers
     {
         private readonly ILogger<ProductController> _logger;
         private readonly ClothingShopDbContext _context;
-        public ProductController(ILogger<ProductController> logger, ClothingShopDbContext context)
+        private readonly IProductImageService _productImageService;
+        public ProductController(ILogger<ProductController> logger, ClothingShopDbContext context, IProductImageService productImageService)
         {
             _logger = logger;
             _context = context;
+            _productImageService = productImageService;
         }
         public async Task<IActionResult> Index(string searchString, int pageNumber = 1, int pageSize = 10)
         {
             var query = _context.Products
                 .Include(p => p.Category)
+                .Include(p=>p.ProductImages)
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
@@ -37,10 +41,11 @@ namespace Clothing_shop_v2.Controllers
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+            var productGetVModel = products.Select(p => ProductMapping.EntityToVModel(p));
 
             var viewModel = new ProductListViewModel
             {
-                Products = products,
+                Products = productGetVModel,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 TotalPages = totalPages,
@@ -59,22 +64,44 @@ namespace Clothing_shop_v2.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ProductCreateVModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    var product = ProductMapping.VModelToEntity(model);
-                    _context.Products.Add(product);
-                    await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = $"Sản phẩm '{product.ProductName}' vừa được tạo.";
-                    return RedirectToAction("Index");
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "An error occurred while creating the product: " + ex.Message);
-                }
+                ViewBag.Categories = _context.Categories.ToList();
+                return View(model);
             }
-            return View(model);
+
+            try
+            {
+                // Chuyển từ ViewModel sang Entity
+                var product = ProductMapping.VModelToEntity(model);
+                product.CreatedDate = DateTime.Now;
+                product.UpdatedDate = DateTime.Now;
+
+                // Lưu sản phẩm
+                _context.Products.Add(product);
+                await _context.SaveChangesAsync();
+
+                // Xử lý hình ảnh (VariantId = null vì đây là ảnh của sản phẩm)
+                if (model.imageFiles != null && model.imageFiles.Any())
+                {
+                    var imageResult = await _productImageService.AddImages(product.Id, model.imageFiles);
+                    if (imageResult != "Thêm hình ảnh thành công.")
+                    {
+                        ModelState.AddModelError("imageFiles", imageResult);
+                        ViewBag.Categories = _context.Categories.ToList();
+                        return View(model);
+                    }
+                }
+
+                TempData["SuccessMessage"] = $"Sản phẩm '{product.ProductName}' vừa được tạo.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Đã có lỗi xảy ra khi tạo sản phẩm: " + ex.Message);
+                ViewBag.Categories = _context.Categories.ToList();
+                return View(model);
+            }
         }
         [HttpGet]
         public async Task<IActionResult> Update(int id)
@@ -167,6 +194,7 @@ namespace Clothing_shop_v2.Controllers
                 .ThenInclude(v => v.Color)
                 .Include(p => p.Variants)
                 .ThenInclude(v => v.Size)
+                .Include(p => p.ProductImages)
                 .FirstOrDefault(p => p.Id == id);
             if (product == null)
             {
