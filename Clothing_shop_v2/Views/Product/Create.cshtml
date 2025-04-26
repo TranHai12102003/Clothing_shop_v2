@@ -59,7 +59,16 @@
                             <label asp-for="imageFiles" class="form-label fw-bold text-muted">
                                 Hình ảnh sản phẩm <span class="text-danger">*</span>
                             </label>
-                            <input asp-for="imageFiles" class="form-control" multiple accept="image/*" required />
+                            <div class="image-upload-container">
+                                <input asp-for="imageFiles" type="file" multiple accept="image/*" required id="imageFilesInput" style="display: none;" />
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                        <p class="mt-2 mb-0">Kéo và thả ảnh vào đây hoặc <span class="text-primary click-to-upload">nhấn để chọn ảnh</span></p>
+                                        <small class="text-muted">Chấp nhận .jpg, .jpeg, .png, .gif. Tối đa 5MB mỗi ảnh.</small>
+                                    </div>
+                                </div>
+                            </div>
                             <span asp-validation-for="imageFiles" class="text-danger"></span>
                             <div id="imagePreview" class="row mt-3"></div>
                         </div>
@@ -78,7 +87,6 @@
     </div>
 </div>
 
-<!-- CSS và Scripts giữ nguyên như trước -->
 <style>
     .card {
         border-radius: 10px;
@@ -176,6 +184,51 @@
         gap: 10px;
     }
 
+    /* Image Upload Container */
+    .image-upload-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .upload-area {
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        background-color: #f8f9fa;
+        transition: border-color 0.3s, background-color 0.3s;
+        cursor: pointer;
+    }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #e7f1ff;
+        }
+
+    .upload-placeholder i {
+        font-size: 3rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder p {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder .click-to-upload {
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .upload-placeholder small {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
     /* Image Preview */
     #imagePreview .preview-image {
         position: relative;
@@ -187,29 +240,36 @@
         height: 150px;
         object-fit: cover;
         border-radius: 6px;
-        border: 1px solid #ced4da;
+        border: 1px solid #dee2e6;
+        transition: transform 0.2s;
     }
+
+        #imagePreview img:hover {
+            transform: scale(1.05);
+        }
 
     #imagePreview .remove-image {
         position: absolute;
-        top: 5px;
-        right: 5px;
+        top: 8px;
+        right: 8px;
         background-color: #dc3545;
         color: white;
         border: none;
         border-radius: 50%;
-        width: 25px;
-        height: 25px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.9rem;
+        font-size: 1rem;
         cursor: pointer;
-        transition: background-color 0.2s;
+        transition: background-color 0.2s, transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
         #imagePreview .remove-image:hover {
             background-color: #c82333;
+            transform: scale(1.1);
         }
 
     /* Responsive */
@@ -246,8 +306,26 @@
             font-size: 0.9rem;
         }
 
+        .upload-area {
+            padding: 20px;
+        }
+
+        .upload-placeholder i {
+            font-size: 2.5rem;
+        }
+
+        .upload-placeholder p {
+            font-size: 0.9rem;
+        }
+
         #imagePreview img {
             height: 120px;
+        }
+
+        #imagePreview .remove-image {
+            width: 24px;
+            height: 24px;
+            font-size: 0.9rem;
         }
     }
 </style>
@@ -256,12 +334,43 @@
     <partial name="_ValidationScriptsPartial" />
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
     <script>
-        // Xử lý preview hình ảnh
-        document.querySelector('input[name="imageFiles"]').addEventListener('change', function (e) {
-            const files = e.target.files;
-            const previewContainer = document.getElementById('imagePreview');
-            previewContainer.innerHTML = ''; // Xóa các preview cũ
+        // Xử lý kéo thả và nhấp để upload
+        const uploadArea = document.getElementById('uploadArea');
+        const imageFilesInput = document.getElementById('imageFilesInput');
+        const imagePreview = document.getElementById('imagePreview');
 
+        // Nhấp để chọn file
+        uploadArea.addEventListener('click', () => {
+            imageFilesInput.click();
+        });
+
+        // Kéo file vào khu vực
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            imageFilesInput.files = files; // Gán file vào input
+            updateImagePreview(files);
+        });
+
+        // Khi người dùng chọn file qua input
+        imageFilesInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            updateImagePreview(files);
+        });
+
+        // Hàm hiển thị preview ảnh
+        function updateImagePreview(files) {
+            imagePreview.innerHTML = ''; // Xóa preview cũ
             Array.from(files).forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = function (event) {
@@ -271,27 +380,26 @@
                         <img src="${event.target.result}" alt="Preview">
                         <button type="button" class="remove-image" data-index="${index}">×</button>
                     `;
-                    previewContainer.appendChild(previewDiv);
+                    imagePreview.appendChild(previewDiv);
                 };
                 reader.readAsDataURL(file);
             });
-        });
+        }
 
-        // Xử lý xóa hình ảnh preview
-        document.getElementById('imagePreview').addEventListener('click', function (e) {
+        // Xử lý xóa ảnh preview
+        imagePreview.addEventListener('click', (e) => {
             if (e.target.classList.contains('remove-image')) {
                 const index = e.target.getAttribute('data-index');
-                const fileInput = document.querySelector('input[name="imageFiles"]');
                 const dataTransfer = new DataTransfer();
 
                 // Tạo lại danh sách file sau khi xóa
-                Array.from(fileInput.files).forEach((file, i) => {
+                Array.from(imageFilesInput.files).forEach((file, i) => {
                     if (i != index) {
                         dataTransfer.items.add(file);
                     }
                 });
 
-                fileInput.files = dataTransfer.files;
+                imageFilesInput.files = dataTransfer.files;
                 e.target.parentElement.remove();
 
                 // Cập nhật lại chỉ số của các nút xóa

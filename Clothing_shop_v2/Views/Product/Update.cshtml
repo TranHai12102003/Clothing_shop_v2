@@ -10,11 +10,29 @@
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Tạo sản phẩm mới</h2>
+                    <h2 class="mb-0"><i class="fas fa-edit me-2"></i>Cập nhật sản phẩm</h2>
                 </div>
                 <div class="card-body">
+                    <!-- Thông báo -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <!-- Form cập nhật sản phẩm -->
                     <form asp-action="Update" method="post" enctype="multipart/form-data">
-						<input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="mb-3">
                             <label asp-for="ProductName" class="form-label fw-bold text-muted">
                                 Tên sản phẩm <span class="text-danger">*</span>
@@ -38,7 +56,58 @@
                             </select>
                             <span asp-validation-for="CategoryId" class="text-danger"></span>
                         </div>
-                        <div class="d-flex">
+
+                        <!-- Hiển thị danh sách ảnh hiện tại -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">Ảnh hiện tại của sản phẩm</label>
+                            <div class="image-list row" id="existingImages">
+                                @{
+                                    var productImages = ViewBag.ProductImages as List<Clothing_shop_v2.Models.ProductImage>;
+                                    if (productImages != null && productImages.Count > 0)
+                                    {
+                                        foreach (var image in productImages)
+                                        {
+                                            <div class="col-md-4 existing-image preview-image" data-image-id="@image.Id">
+                                                <img src="@image.ImageUrl" alt="Product Image" onerror="this.src='/images/placeholder.jpg'" />
+                                                <div class="image-actions mt-2 d-flex gap-2 justify-content-center">
+                                                    <button type="button" class="btn btn-sm btn-danger delete-image-btn" title="Xóa ảnh">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-sm @(image.IsPrimary ? "btn-success" : "btn-secondary") set-primary-btn" title="@(image.IsPrimary ? "Đã là ảnh chính" : "Đặt làm ảnh chính")">
+                                                        <i class="fas fa-star"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted">Sản phẩm chưa có ảnh.</p>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Trường tải lên hình ảnh mới -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted">
+                                Thêm ảnh mới (nếu muốn thay đổi)
+                            </label>
+                            <div class="image-upload-container">
+                                <input type="file" name="imageFiles" multiple accept="image/*" id="imageFilesInput" style="display: none;" />
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                        <p class="mt-2 mb-0">Kéo và thả ảnh vào đây hoặc <span class="text-primary click-to-upload">nhấn để chọn ảnh</span></p>
+                                        <small class="text-muted">Chấp nhận .jpg, .jpeg, .png, .gif. Tối đa 5MB mỗi ảnh.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="imagePreview" class="row mt-3"></div>
+                        </div>
+
+                        <!-- Nút hành động -->
+                        <div class="d-flex mt-4">
                             <button type="submit" class="btn btn-primary btn-custom">
                                 <i class="fas fa-save me-2"></i>Cập nhật
                             </button>
@@ -120,6 +189,7 @@
             border-color: #5a6268;
             transform: translateY(-1px);
         }
+
     /* CKEditor */
     .ck-editor__editable {
         min-height: 250px;
@@ -148,6 +218,109 @@
     .d-flex {
         gap: 10px;
     }
+
+    /* Image Upload Container */
+    .image-upload-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .upload-area {
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        background-color: #f8f9fa;
+        transition: border-color 0.3s, background-color 0.3s;
+        cursor: pointer;
+    }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #e7f1ff;
+        }
+
+    .upload-placeholder i {
+        font-size: 3rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder p {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder .click-to-upload {
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .upload-placeholder small {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    /* Existing Images and Image Preview */
+    .image-list, #imagePreview {
+        margin-bottom: 15px;
+    }
+
+    .existing-image, .preview-image {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+        .existing-image img, #imagePreview img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            transition: transform 0.2s;
+        }
+
+            .existing-image img:hover, #imagePreview img:hover {
+                transform: scale(1.05);
+            }
+
+    .image-actions {
+        display: flex;
+        justify-content: center;
+    }
+
+        .image-actions .btn {
+            padding: 5px;
+            font-size: 0.9rem;
+        }
+
+    #imagePreview .remove-image {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        #imagePreview .remove-image:hover {
+            background-color: #c82333;
+            transform: scale(1.1);
+        }
+
     /* Responsive */
     @@media screen and (max-width: 768px) {
         .card-body {
@@ -171,7 +344,7 @@
 
         .d-flex {
             flex-direction: column;
-            gap: 12px !important; /* Khoảng cách trên mobile */
+            gap: 12px !important;
         }
 
         .ck-editor__editable {
@@ -181,14 +354,232 @@
         .ck.ck-toolbar {
             font-size: 0.9rem;
         }
+
+        .upload-area {
+            padding: 20px;
+        }
+
+        .upload-placeholder i {
+            font-size: 2.5rem;
+        }
+
+        .upload-placeholder p {
+            font-size: 0.9rem;
+        }
+
+        .existing-image img, #imagePreview img {
+            height: 120px;
+        }
+
+        .image-actions .btn {
+            padding: 4px;
+            font-size: 0.85rem;
+        }
+
+        #imagePreview .remove-image {
+            width: 24px;
+            height: 24px;
+            font-size: 0.9rem;
+        }
     }
 </style>
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
     <script>
+        // Lấy CSRF token từ thẻ meta (thay vì input để đảm bảo tính chính xác)
+        const csrfTokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const csrfToken = csrfTokenMeta ? csrfTokenMeta.getAttribute('content') : document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (!csrfToken) {
+            console.error('CSRF token not found');
+        }
+
+        // Xử lý kéo thả và nhấp để upload ảnh mới
+        const uploadArea = document.getElementById('uploadArea');
+        const imageFilesInput = document.getElementById('imageFilesInput');
+        const imagePreview = document.getElementById('imagePreview');
+
+        // Nhấp để chọn file
+        uploadArea.addEventListener('click', () => {
+            imageFilesInput.click();
+        });
+
+        // Kéo file vào khu vực
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            imageFilesInput.files = files; // Gán file vào input
+            updateImagePreview(files);
+        });
+
+        // Khi người dùng chọn file qua input
+        imageFilesInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            updateImagePreview(files);
+        });
+
+        // Hàm hiển thị preview ảnh mới
+        function updateImagePreview(files) {
+            imagePreview.innerHTML = ''; // Xóa preview cũ
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'col-md-4 preview-image';
+                    previewDiv.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview">
+                        <button type="button" class="remove-image" data-index="${index}">×</button>
+                    `;
+                    imagePreview.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Xử lý xóa ảnh preview (ảnh mới)
+        imagePreview.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-image')) {
+                const index = e.target.getAttribute('data-index');
+                const dataTransfer = new DataTransfer();
+
+                // Tạo lại danh sách file sau khi xóa
+                Array.from(imageFilesInput.files).forEach((file, i) => {
+                    if (i != index) {
+                        dataTransfer.items.add(file);
+                    }
+                });
+
+                imageFilesInput.files = dataTransfer.files;
+                e.target.parentElement.remove();
+
+                // Cập nhật lại chỉ số của các nút xóa
+                document.querySelectorAll('.remove-image').forEach((btn, i) => {
+                    btn.setAttribute('data-index', i);
+                });
+            }
+        });
+
+        const deleteImageUrl = '@Url.Action("DeleteImage", "ProductImage")';
+
+        // Xử lý xóa ảnh hiện tại (AJAX)
+        document.addEventListener('click', async e => {
+            if (e.target.closest('.delete-image-btn')) {
+                const imageItem = e.target.closest('.existing-image');
+                const imageId = imageItem.getAttribute('data-image-id');
+                if (!imageId) {
+                    showAlert('Không tìm thấy ID ảnh.', 'danger');
+                    return;
+                }
+
+                if (confirm('Bạn có chắc chắn muốn xóa ảnh này?')) {
+                    try {
+                        const response = await fetch(deleteImageUrl, {
+                            method: 'POST',
+                            body: new URLSearchParams({ 'imageId': imageId }),
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'RequestVerificationToken': csrfToken
+                            }
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+                        }
+
+                        const data = await response.json();
+                        if (data.success) {
+                            imageItem.remove();
+                            showAlert(data.message, 'success');
+                            if (!document.querySelector('.existing-image')) {
+                                document.querySelector('.image-list').innerHTML = '<p class="text-muted">Sản phẩm chưa có ảnh.</p>';
+                            }
+                        } else {
+                            showAlert(data.message || 'Có lỗi xảy ra khi xóa ảnh.', 'danger');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting image:', error);
+                        showAlert('Đã có lỗi xảy ra khi xóa ảnh: ' + error.message, 'danger');
+                    }
+                }
+            }
+        });
+		const updateImageUrl = '@Url.Action("UpdateImage", "ProductImage")'; //muốn gọi AJAX đến action UpdateImage trong ProductImageController
+
+        // Xử lý đặt ảnh làm ảnh chính (AJAX)
+        document.addEventListener('click', async e => {
+            if (e.target.closest('.set-primary-btn')) {
+                const imageItem = e.target.closest('.existing-image');
+                const imageId = imageItem.getAttribute('data-image-id');
+                const btn = e.target.closest('.set-primary-btn');
+                if (!imageId) {
+                    showAlert('Không tìm thấy ID ảnh.', 'danger');
+                    return;
+                }
+                if (btn.classList.contains('btn-success')) return;
+
+                try {
+                    const response = await fetch(updateImageUrl, {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            'imageId': imageId,
+                            'isPrimary': 'true'
+                        }),
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': csrfToken
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+                    }
+
+                    const data = await response.json();
+                    if (data.success) {
+                        // Cập nhật giao diện
+                        document.querySelectorAll('.set-primary-btn').forEach(btn => {
+                            btn.classList.remove('btn-success');
+                            btn.classList.add('btn-secondary');
+                            btn.title = 'Đặt làm ảnh chính';
+                        });
+                        btn.classList.remove('btn-secondary');
+                        btn.classList.add('btn-success');
+                        btn.title = 'Đã là ảnh chính';
+                        showAlert(data.message, 'success');
+                    } else {
+                        showAlert(data.message || 'Có lỗi xảy ra khi đặt ảnh chính.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Error setting primary image:', error);
+                    showAlert('Đã có lỗi xảy ra khi đặt ảnh chính: ' + error.message, 'danger');
+                }
+            }
+        });
+
+        // Hàm hiển thị thông báo
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.role = 'alert';
+            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}<button type="button" class="btn-close" data-bs-dismiss="alert"></button>`;
+            document.querySelector('.card-body').insertAdjacentElement('afterbegin', alert);
+            setTimeout(() => bootstrap.Alert.getOrCreateInstance(alert).close(), 3000);
+        }
+
+        // Khởi tạo CKEditor
         ClassicEditor
             .create(document.querySelector('#description'), {
                 toolbar: [
@@ -241,12 +632,11 @@
                 simpleUpload: {
                     uploadUrl: '/api/product/upload-image',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
                     }
                 }
             })
             .then(editor => {
-                // Đảm bảo validation hoạt động
                 editor.model.document.on('change:data', () => {
                     editor.updateSourceElement();
                 });
