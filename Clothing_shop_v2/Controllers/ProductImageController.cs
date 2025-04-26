@@ -126,8 +126,7 @@ namespace Clothing_shop_v2.Controllers
         [HttpPost("DeleteImage")]
         public async Task<IActionResult> DeleteImage(int imageId)
         {
-            var productImage = await _context.ProductImages
-                .FirstOrDefaultAsync(pi => pi.Id == imageId);
+            var productImage = await _context.ProductImages.FirstOrDefaultAsync(pi => pi.Id == imageId);
             if (productImage == null)
             {
                 return Json(new { success = false, message = "Hình ảnh không tồn tại." });
@@ -135,7 +134,6 @@ namespace Clothing_shop_v2.Controllers
 
             try
             {
-                // Xóa ảnh trên Cloudinary (nếu cần)
                 if (!string.IsNullOrEmpty(productImage.ImageUrl))
                 {
                     var uri = new Uri(productImage.ImageUrl);
@@ -153,16 +151,13 @@ namespace Clothing_shop_v2.Controllers
                     }
                 }
 
-                // Kiểm tra xem ảnh bị xóa có phải là ảnh chính không
                 bool wasPrimary = productImage.IsPrimary;
                 var productId = productImage.ProductId;
                 var variantId = productImage.VariantId;
 
-                // Xóa ảnh khỏi database
                 _context.ProductImages.Remove(productImage);
                 await _context.SaveChangesAsync();
 
-                // Nếu ảnh bị xóa là ảnh chính, chọn ảnh khác làm ảnh chính (nếu còn ảnh)
                 if (wasPrimary)
                 {
                     var remainingImages = await _context.ProductImages
@@ -189,8 +184,7 @@ namespace Clothing_shop_v2.Controllers
         [HttpPost("UpdateImage")]
         public async Task<IActionResult> UpdateImage(int imageId, bool isPrimary)
         {
-            var productImage = await _context.ProductImages
-                .FirstOrDefaultAsync(pi => pi.Id == imageId);
+            var productImage = await _context.ProductImages.FirstOrDefaultAsync(pi => pi.Id == imageId);
             if (productImage == null)
             {
                 return Json(new { success = false, message = "Hình ảnh không tồn tại." });
@@ -200,7 +194,6 @@ namespace Clothing_shop_v2.Controllers
             {
                 if (isPrimary)
                 {
-                    // Đặt tất cả ảnh khác của cùng sản phẩm/biến thể về IsPrimary = false
                     var otherImages = await _context.ProductImages
                         .Where(pi => pi.ProductId == productImage.ProductId &&
                                      pi.VariantId == productImage.VariantId &&
@@ -209,6 +202,7 @@ namespace Clothing_shop_v2.Controllers
                     foreach (var img in otherImages)
                     {
                         img.IsPrimary = false;
+                        img.UpdatedDate = DateTime.Now;
                     }
                 }
                 productImage.IsPrimary = isPrimary;
