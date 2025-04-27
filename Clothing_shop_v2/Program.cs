@@ -3,8 +3,17 @@ using Clothing_shop_v2.Models;
 using Clothing_shop_v2.Services;
 using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore;
+using WebPizza_API_BackEnd.Service;
+using WebPizza_API_BackEnd.Service.IService;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 1. CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -19,8 +28,14 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
     cloudinarySettings.ApiSecret
 )));
 
+// 5. JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
 // Đăng ký ProductImageService
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
@@ -32,6 +47,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -41,6 +57,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Admin}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

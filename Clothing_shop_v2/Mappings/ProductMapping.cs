@@ -23,7 +23,8 @@ namespace Clothing_shop_v2.Mappings
             }
             if(product.ProductImages != null && product.ProductImages.Count > 0)
             {
-                vmodel.PrimaryImageUrl = product.ProductImages.FirstOrDefault()?.ImageUrl ?? string.Empty; // Lấy ảnh đầu tiên làm ảnh chính
+                vmodel.PrimaryImageUrl = product.ProductImages?.FirstOrDefault(pi => pi.IsPrimary)?.ImageUrl
+                         ?? product.ProductImages?.FirstOrDefault()?.ImageUrl;//Tìm ảnh chính nếu không có sẽ lấy ảnh đầu tiên tìm thấy
             }
             return vmodel;
         }
