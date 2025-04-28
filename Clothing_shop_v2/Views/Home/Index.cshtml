@@ -1,4 +1,4 @@
-﻿@model List<Clothing_shop_v2.Models.Category>
+﻿@model Clothing_shop_v2.VModels.Home.HomeVModel
 @{
     ViewData["Title"] = "Clothing Shop";
     Layout = "_Layout";
@@ -9,13 +9,13 @@
 @await Html.PartialAsync("_Featured")
 
 <!-- Categories -->
-@await Html.PartialAsync("_Categories", Model)
+@await Html.PartialAsync("_Categories", Model.Categories)
 
 <!-- Offers -->
 @await Html.PartialAsync("_Offer")
 
 <!-- Products -->
-@await Html.PartialAsync("_Product")
+@await Html.PartialAsync("_Product",Model.Products)
 
 <!-- Subscribe -->
 @await Html.PartialAsync("_Subscribe")

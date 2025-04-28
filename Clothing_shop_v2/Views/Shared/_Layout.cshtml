@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model Clothing_shop_v2.VModels.Home.HomeVModel
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -13,7 +14,7 @@
     @await Html.PartialAsync("_Topbar")
 
     <!-- Navbar -->
-    @await Html.PartialAsync("_Navbar")
+    @await Html.PartialAsync("_Navbar",Model.Categories)
 
     <!-- Main Content -->
     @RenderBody()

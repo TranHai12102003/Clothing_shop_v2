@@ -5,6 +5,7 @@ using Clothing_shop_v2.Mappings;
 using Clothing_shop_v2.Models;
 using Clothing_shop_v2.Services.ISerivce;
 using Clothing_shop_v2.VModels;
+using Clothing_shop_v2.VModels.Home;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,11 +30,29 @@ namespace Clothing_shop_v2.Controllers
 
         public IActionResult Index()
         {
-            var categories = _context.Categories
-            .Include(c => c.ParentCategory)
-            .Include(c => c.Products)
-            .ToList();
-            return View(categories);
+            var model = new HomeVModel
+            {
+                Products = _context.Products
+                    .Include(p => p.Category)
+                    .Select(p => new ProductGetVModel
+                    {
+                        Id = p.Id,
+                        ProductName = p.ProductName,
+                        PrimaryImageUrl = p.ProductImages.FirstOrDefault(p => p.IsPrimary == true).ImageUrl,
+                        CategoryId = p.CategoryId
+                    }).ToList(),
+                Categories = _context.Categories
+                    //.Include(c=>c.ParentCategory)
+                    .Select(c => new CategoryGetVModel
+                    {
+                        Id = c.Id,
+                        CategoryName = c.CategoryName,
+                        ImageUrl = c.ImageUrl,
+                        ParentCategoryId = c.ParentCategoryId,
+                        IsActive = c.IsActive,
+                    }).ToList()
+            };
+            return View(model);
         }
         [HttpGet]
         public IActionResult Register()
