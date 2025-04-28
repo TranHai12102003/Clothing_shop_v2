@@ -1,4 +1,4 @@
-﻿namespace Clothing_shop_v2.Services
+﻿namespace Clothing_shop_v2.Services.ISerivce
 {
     public interface IProductImageService
     {

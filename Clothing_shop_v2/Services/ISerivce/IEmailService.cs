@@ -1,4 +1,4 @@
-﻿namespace WebPizza_API_BackEnd.Service.IService
+﻿namespace Clothing_shop_v2.Services.ISerivce
 {
     public interface IEmailService
     {
