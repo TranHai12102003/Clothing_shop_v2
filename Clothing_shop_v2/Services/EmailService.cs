@@ -1,7 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
-using WebPizza_API_BackEnd.Service.IService;
 using Microsoft.Extensions.Configuration;
+using Clothing_shop_v2.Services.ISerivce;
 
 namespace WebPizza_API_BackEnd.Service
 {

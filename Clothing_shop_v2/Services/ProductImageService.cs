@@ -2,6 +2,7 @@
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore;
+using Clothing_shop_v2.Services.ISerivce;
 
 namespace Clothing_shop_v2.Services
 {

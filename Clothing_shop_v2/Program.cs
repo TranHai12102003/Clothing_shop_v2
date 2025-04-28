@@ -1,10 +1,10 @@
 ﻿using Clothing_shop_v2.Helpers;
 using Clothing_shop_v2.Models;
 using Clothing_shop_v2.Services;
+using Clothing_shop_v2.Services.ISerivce;
 using CloudinaryDotNet;
 using Microsoft.EntityFrameworkCore;
 using WebPizza_API_BackEnd.Service;
-using WebPizza_API_BackEnd.Service.IService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +28,25 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
     cloudinarySettings.ApiSecret
 )));
 
+// Thêm Session
+//builder.Services.AddSession(options =>
+//{
+//    options.IdleTimeout = TimeSpan.FromMinutes(30);
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.IsEssential = true;
+//});
+
+//Thêm Cookie
+builder.Services.AddAuthentication("MyCookieAuth")
+    .AddCookie("MyCookieAuth", options =>
+    {
+        options.Cookie.Name = "MyCookieAuth";
+        options.LoginPath = "/Home/Login"; // Nếu chưa login sẽ chuyển về đây
+        options.AccessDeniedPath = "/Home/AccessDenied"; // Nếu không đủ quyền sẽ trả về trang 404
+        options.ExpireTimeSpan = TimeSpan.FromHours(2); // Thời gian hết hạn cookie
+    });
+builder.Services.AddAuthorization(); // Thêm Authorize luôn
+
 // 5. JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
@@ -36,6 +55,7 @@ var jwtAudience = builder.Configuration["Jwt:Audience"];
 // Đăng ký ProductImageService
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserService, UserService>();    
 
 var app = builder.Build();
 
@@ -53,7 +73,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+//app.UseSession();//session
+
+app.UseAuthentication(); // Thêm Authentication
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

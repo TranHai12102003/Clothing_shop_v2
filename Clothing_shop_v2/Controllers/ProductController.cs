@@ -1,6 +1,6 @@
 ﻿using Clothing_shop_v2.Mappings;
 using Clothing_shop_v2.Models;
-using Clothing_shop_v2.Services;
+using Clothing_shop_v2.Services.ISerivce;
 using Clothing_shop_v2.VModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
