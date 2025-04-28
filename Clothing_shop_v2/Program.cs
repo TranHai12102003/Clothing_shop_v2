@@ -52,10 +52,11 @@ var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 var jwtAudience = builder.Configuration["Jwt:Audience"];
 
-// Đăng ký ProductImageService
+// Đăng ký Services
 builder.Services.AddScoped<IProductImageService, ProductImageService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IUserService, UserService>();    
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
 
 var app = builder.Build();
 
