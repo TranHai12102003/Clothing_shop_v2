@@ -52,6 +52,16 @@ namespace Clothing_shop_v2.Controllers
             ModelState.AddModelError("", response.Message);
             return RedirectToAction("Index");
         }
+        [HttpGet]
+        public async Task<IActionResult> Update(int id)
+        {
+            var promotion = await _promotionService.GetById(id);
+            if (promotion == null)
+            {
+                return NotFound();
+            }
+            return View(promotion.Value);
+        }
         [HttpPost]
         public async Task<IActionResult> Update(PromotionUpdateVmodel vmodel)
         {

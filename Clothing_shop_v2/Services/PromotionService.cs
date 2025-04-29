@@ -80,6 +80,17 @@ namespace Clothing_shop_v2.Services
             };
         }
 
+        public async Task<ActionResult<PromotionGetVmodel>> GetById(int id)
+        {
+            var promotion = await _context.Promotions
+                .FirstOrDefaultAsync(x=> x.Id == id);
+            if (promotion == null)
+            {
+                return null;
+            }
+            return PromotionMapping.EntityToVModel(promotion);
+        }   
+
         public async Task<ResponseResult> ToggleActive(int id, bool isActive = false)
         {
             var response = new ResponseResult();
