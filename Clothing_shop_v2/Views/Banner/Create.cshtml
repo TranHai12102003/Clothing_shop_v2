@@ -1,0 +1,527 @@
+﻿@model Clothing_shop_v2.VModels.BannerCreateVModel
+
+@{
+    ViewData["Title"] = "Tạo sản banner mới";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Tạo sản banner mới</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Thông báo thành công -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                    }
+                    <form asp-action="Create" method="post" enctype="multipart/form-data" id="productForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="mb-3">
+                            <label asp-for="BannerName" class="form-label fw-bold text-muted">
+                                Tên banner <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="BannerName" class="form-control" placeholder="Nhập tên banner..." />
+                            <span asp-validation-for="BannerName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold text-muted">
+                                Mô tả <span class="text-danger">*</span>
+                            </label>
+                            <textarea asp-for="Description" class="form-control" id="description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="CategoryId" class="form-label fw-bold text-muted">
+                                Danh mục <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="CategoryId" class="form-select" asp-items="@(new SelectList(ViewBag.Categories, "Id", "CategoryName"))">
+                                <option value="">Chọn danh mục</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ProductId" class="form-label fw-bold text-muted">
+                                Sản phẩm <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="ProductId" class="form-select" asp-items="@(new SelectList(ViewBag.Products, "Id", "ProductName"))">
+                                <option value="">Chọn sản phẩm</option>
+                            </select>
+                            <span asp-validation-for="ProductId" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="PromotionId" class="form-label fw-bold text-muted">
+                                Khuyến mãi <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="PromotionId" class="form-select" asp-items="@(new SelectList(ViewBag.Promotions, "Id", "PromotionName"))">
+                                <option value="">Chọn khuyến mãi</option>
+                            </select>
+                            <span asp-validation-for="PromotionId" class="text-danger"></span>
+                        </div>
+						<div class="mb-3">
+							<label asp-for="LinkUrl" class="form-label fw-bold text-muted">
+								Đường dẫn <span class="text-danger">*</span>
+							</label>
+							<input asp-for="LinkUrl" class="form-control" placeholder="Nhập đường dẫn..." />
+							<span asp-validation-for="LinkUrl" class="text-danger"></span>
+						</div>
+                        <div class="mb-3">
+                            <label asp-for="StartDate" class="block text-sm font-medium text-gray-700">
+                                Ngày bắt đầu <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="StartDate" type="date" class="input-field mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none" />
+                            <span asp-validation-for="StartDate" class="field-validation-error"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="EndDate" class="block text-sm font-medium text-gray-700">
+                                Ngày kết thúc <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="EndDate" type="date" class="input-field mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none" />
+                            <span asp-validation-for="EndDate" class="field-validation-error"></span>
+                        </div>
+						<div class="mb-3">
+							<label asp-for="DisplayOrder" class="form-label fw-bold text-muted">
+								Sắp xếp <span class="text-danger">*</span>
+							</label>
+							<input asp-for="DisplayOrder" class="form-control" placeholder="Nhập thứ tự sắp xếp..." />
+							<span asp-validation-for="DisplayOrder" class="text-danger"></span>
+						</div>
+						<div class="mb-3">
+							<label asp-for="IsActive" class="form-label fw-bold text-muted">
+								Trạng thái <span class="text-danger">*</span>
+							</label>
+							<select asp-for="IsActive" class="form-select">
+								<option value="true">Hiển thị</option>
+								<option value="false">Ẩn</option>
+							</select>
+							<span asp-validation-for="IsActive" class="text-danger"></span>
+						</div>
+                        <!-- Trường tải lên hình ảnh -->
+                        <div class="mb-3">
+                            <label asp-for="ImageFile" class="form-label fw-bold text-muted">
+                                Hình ảnh sản phẩm <span class="text-danger">*</span>
+                            </label>
+                            <div class="image-upload-container">
+                                <input asp-for="ImageFile" type="file" accept="image/*" required id="imageFilesInput" style="display: none;" />
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                        <p class="mt-2 mb-0">Kéo và thả ảnh vào đây hoặc <span class="text-primary click-to-upload">nhấn để chọn ảnh</span></p>
+                                        <small class="text-muted">Chấp nhận .jpg, .jpeg, .png, .gif. Tối đa 5MB mỗi ảnh.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                            <div id="imagePreview" class="row mt-3"></div>
+                        </div>
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary btn-custom">
+                                <i class="fas fa-save me-2"></i>Tạo
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary btn-custom">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 15px 20px;
+        border-bottom: none;
+    }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+    .card-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        }
+
+    .btn-custom {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-primary.btn-custom {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary.btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+    .btn-secondary.btn-custom {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+        .btn-secondary.btn-custom:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+    /* CKEditor */
+    .ck-editor__editable {
+        min-height: 250px;
+        border: 1px solid #ced4da !important;
+        border-radius: 6px !important;
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+
+    .ck.ck-toolbar {
+        border: 1px solid #ced4da !important;
+        border-radius: 6px 6px 0 0 !important;
+        background-color: #f8f9fa;
+    }
+
+    .ck.ck-button, .ck.ck-button.ck-on {
+        border-radius: 4px;
+        margin: 2px;
+        transition: background-color 0.2s;
+    }
+
+        .ck.ck-button:hover {
+            background-color: #e9ecef;
+        }
+
+    .d-flex {
+        gap: 10px;
+    }
+
+    /* Image Upload Container */
+    .image-upload-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .upload-area {
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        background-color: #f8f9fa;
+        transition: border-color 0.3s, background-color 0.3s;
+        cursor: pointer;
+    }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #e7f1ff;
+        }
+
+    .upload-placeholder i {
+        font-size: 3rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder p {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder .click-to-upload {
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .upload-placeholder small {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    /* Image Preview */
+    #imagePreview .preview-image {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    #imagePreview img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        transition: transform 0.2s;
+    }
+
+        #imagePreview img:hover {
+            transform: scale(1.05);
+        }
+
+    #imagePreview .remove-image {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        #imagePreview .remove-image:hover {
+            background-color: #c82333;
+            transform: scale(1.1);
+        }
+
+    /* Responsive */
+    @@media screen and (max-width: 768px) {
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-custom {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .d-flex {
+            flex-direction: column;
+            gap: 12px !important;
+        }
+
+        .ck-editor__editable {
+            min-height: 200px;
+        }
+
+        .ck.ck-toolbar {
+            font-size: 0.9rem;
+        }
+
+        .upload-area {
+            padding: 20px;
+        }
+
+        .upload-placeholder i {
+            font-size: 2.5rem;
+        }
+
+        .upload-placeholder p {
+            font-size: 0.9rem;
+        }
+
+        #imagePreview img {
+            height: 120px;
+        }
+
+        #imagePreview .remove-image {
+            width: 24px;
+            height: 24px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+        <script>
+            // Xử lý kéo thả và nhấp để upload
+            const uploadArea = document.getElementById('uploadArea');
+            const imageFilesInput = document.getElementById('imageFilesInput');
+            const imagePreview = document.getElementById('imagePreview');
+
+            // Nhấp để chọn file
+            uploadArea.addEventListener('click', () => {
+                imageFilesInput.click();
+            });
+
+            // Kéo file vào khu vực
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                imageFilesInput.files = files; // Gán file vào input
+                updateImagePreview(files);
+            });
+
+            // Khi người dùng chọn file qua input
+            imageFilesInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                updateImagePreview(files);
+            });
+
+            // Hàm hiển thị preview ảnh
+            function updateImagePreview(files) {
+                imagePreview.innerHTML = ''; // Xóa preview cũ
+                Array.from(files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'col-md-4 preview-image';
+                        previewDiv.innerHTML = `
+                            <img src="${event.target.result}" alt="Preview">
+                            <button type="button" class="remove-image" data-index="${index}">×</button>
+                        `;
+                        imagePreview.appendChild(previewDiv);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Xử lý xóa ảnh preview
+            imagePreview.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-image')) {
+                    const index = e.target.getAttribute('data-index');
+                    const dataTransfer = new DataTransfer();
+
+                    // Tạo lại danh sách file sau khi xóa
+                    Array.from(imageFilesInput.files).forEach((file, i) => {
+                        if (i != index) {
+                            dataTransfer.items.add(file);
+                        }
+                    });
+
+                    imageFilesInput.files = dataTransfer.files;
+                    e.target.parentElement.remove();
+
+                    // Cập nhật lại chỉ số của các nút xóa
+                    document.querySelectorAll('.remove-image').forEach((btn, i) => {
+                        btn.setAttribute('data-index', i);
+                    });
+                }
+            });
+
+            // Khởi tạo CKEditor
+            ClassicEditor
+                .create(document.querySelector('#description'), {
+                    toolbar: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor', '|',
+                        'alignment', 'bulletedList', 'numberedList', 'outdent', 'indent', '|',
+                        'link', 'imageUpload', 'insertTable', 'blockQuote', 'mediaEmbed', '|',
+                        'undo', 'redo', 'sourceEditing'
+                    ],
+                    fontFamily: {
+                        options: ['default', 'Arial', 'Times New Roman', 'Courier New', 'Verdana']
+                    },
+                    fontSize: {
+                        options: [10, 12, 14, 'default', 18, 20, 24, 30, 36]
+                    },
+                    fontColor: {
+                        colors: [
+                            { color: '#000000', label: 'Đen' },
+                            { color: '#FF0000', label: 'Đỏ' },
+                            { color: '#00FF00', label: 'Xanh lá' },
+                            { color: '#0000FF', label: 'Xanh dương' },
+                            { color: '#FFFF00', label: 'Vàng' },
+                            { color: '#FFA500', label: 'Cam' },
+                            { color: '#800080', label: 'Tím' },
+                            { color: '#FFFFFF', label: 'Trắng' }
+                        ]
+                    },
+                    fontBackgroundColor: {
+                        colors: [
+                            { color: '#000000', label: 'Đen' },
+                            { color: '#FF0000', label: 'Đỏ' },
+                            { color: '#00FF00', label: 'Xanh lá' },
+                            { color: '#0000FF', label: 'Xanh dương' },
+                            { color: '#FFFF00', label: 'Vàng' },
+                            { color: '#FFA500', label: 'Cam' },
+                            { color: '#800080', label: 'Tím' },
+                            { color: '#FFFFFF', label: 'Trắng' }
+                        ]
+                    },
+                    image: {
+                        toolbar: [
+                            'imageTextAlternative', 'imageStyle:inline', 'imageStyle:block', 'imageStyle:side',
+                            'linkImage'
+                        ]
+                    },
+                    table: {
+                        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                    }
+                })
+                .then(editor => {
+                    editor.model.document.on('change:data', () => {
+                        editor.updateSourceElement();
+                    });
+                })
+                .catch(error => {
+                    console.error('CKEditor error:', error);
+                });
+        </script>
+}
