@@ -63,7 +63,11 @@ namespace Clothing_shop_v2.Services
 
         public async Task<ActionResult<PaginationModel<BannerGetVModel>>> GetAll(BannerFilterParams parameters)
         {
-            IQueryable<Banner> query = _context.Banners.Where(BuildQueryable(parameters));
+            IQueryable<Banner> query = _context.Banners
+                .Include(x => x.Product)
+                .Include(x => x.Category)
+                .Include(x => x.Promotion)
+                .Where(BuildQueryable(parameters));
 
             var promotions = await query
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
@@ -86,6 +90,9 @@ namespace Clothing_shop_v2.Services
         public async Task<ActionResult<BannerGetVModel>> GetById(int id)
         {
             var banner = await _context.Banners
+                .Include(x => x.Product)
+                .Include(x => x.Category)
+                .Include(x => x.Promotion)
                 .FirstOrDefaultAsync(x=>x.Id == id);
             if (banner == null)
             {
@@ -94,7 +101,7 @@ namespace Clothing_shop_v2.Services
             return BannerMapping.EntityToVModel(banner);
         }
 
-        public async Task<ResponseResult> Update(BannerUpdateVModel vmodel)
+        public async Task<ResponseResult> Update(BannerUpdateVModel vmodel, string image)
         {
             var response = new ResponseResult();
             try
@@ -105,9 +112,31 @@ namespace Clothing_shop_v2.Services
                     return new ErrorResponseResult("Không tìm thấy banner");
                 }
                 var savedEntity = BannerMapping.VModelToModel(vmodel, entity);
+                savedEntity.ImageUrl = image;
                 _context.Banners.Update(savedEntity);
                 await _context.SaveChangesAsync();
                 response = new SuccessResponseResult(entity, "Cập nhật banner thành công");
+                return response;
+            }
+            catch (ValidationException ex)
+            {
+                return new ErrorResponseResult(ex.Message);
+            }
+        }
+
+        public async Task<ResponseResult> ToggleActive(int id, bool isActive = false)
+        {
+            var response = new ResponseResult();
+            try
+            {
+                var entity = await _context.Banners.FirstOrDefaultAsync(x => x.Id == id);
+                if (entity == null)
+                {
+                    return new ErrorResponseResult("Không tìm thấy banner");
+                }
+                entity.IsActive = isActive;
+                await _context.SaveChangesAsync();
+                response = new SuccessResponseResult(entity, "Thay đổi trạng thánh thành công");
                 return response;
             }
             catch (ValidationException ex)

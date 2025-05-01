@@ -1,4 +1,5 @@
-﻿using Clothing_shop_v2.Models;
+﻿using Clothing_shop_v2.Common.Contansts;
+using Clothing_shop_v2.Models;
 using Clothing_shop_v2.VModels;
 
 namespace Clothing_shop_v2.Mappings
@@ -7,7 +8,7 @@ namespace Clothing_shop_v2.Mappings
     {
         public static BannerGetVModel EntityToVModel(Banner banner)
         {
-            return new BannerGetVModel
+            var vModel = new BannerGetVModel
             {
                 Id = banner.Id,
                 BannerName = banner.BannerName,
@@ -24,6 +25,34 @@ namespace Clothing_shop_v2.Mappings
                 CreatedDate = banner.CreatedDate,
                 UpdatedDate = banner.UpdatedDate
             };
+            var category = banner?.Category;
+            if (category != null)
+            {
+                vModel.Category = new IdNameVModel
+                {
+                    Id = category.Id,
+                    Name = category.CategoryName
+                };
+            }
+            var product = banner?.Product;
+            if (product != null)
+            {
+                vModel.Product = new IdNameVModel
+                {
+                    Id = product.Id,
+                    Name = product.ProductName
+                };
+            }
+            var promotion = banner?.Promotion;
+            if (promotion != null)
+            {
+                vModel.Promotion = new IdNameVModel
+                {
+                    Id = promotion.Id,
+                    Name = promotion.PromotionName
+                };
+            }
+            return vModel;
         }
         public static Banner VModelToModel(BannerCreateVModel bannerCreateVModel)
         {
