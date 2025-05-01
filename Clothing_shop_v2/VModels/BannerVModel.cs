@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Clothing_shop_v2.Common.Constants;
+using Clothing_shop_v2.Common.Contansts;
 
 namespace Clothing_shop_v2.VModels
 {
@@ -37,8 +38,8 @@ namespace Clothing_shop_v2.VModels
         [Range(0, int.MaxValue, ErrorMessage = "Thứ tự hiển thị phải là số không âm")]
         public int DisplayOrder { get; set; }
 
-        [Required(ErrorMessage = "Vui lòng chọn một ảnh")]
-        public IFormFile ImageFile { get; set; }
+        //[Required(ErrorMessage = "Vui lòng chọn một ảnh")]
+        public IFormFile? ImageFile { get; set; }
     }
     public class BannerUpdateVModel : BannerCreateVModel
     {
@@ -48,6 +49,9 @@ namespace Clothing_shop_v2.VModels
     {
         public DateTime CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public IdNameVModel? Category { get; set; }
+        public IdNameVModel? Product { get; set; }
+        public IdNameVModel? Promotion { get; set; }
     }
     public class BannerFilterParams
     {
