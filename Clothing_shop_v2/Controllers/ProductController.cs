@@ -1,5 +1,7 @@
-﻿using Clothing_shop_v2.Mappings;
+﻿using Clothing_shop_v2.Common.Models;
+using Clothing_shop_v2.Mappings;
 using Clothing_shop_v2.Models;
+using Clothing_shop_v2.Services;
 using Clothing_shop_v2.Services.ISerivce;
 using Clothing_shop_v2.VModels;
 using Microsoft.AspNetCore.Mvc;
@@ -12,48 +14,57 @@ namespace Clothing_shop_v2.Controllers
         private readonly ILogger<ProductController> _logger;
         private readonly ClothingShopDbContext _context;
         private readonly IProductImageService _productImageService;
-        public ProductController(ILogger<ProductController> logger, ClothingShopDbContext context, IProductImageService productImageService)
+        private readonly IProductService _productService;
+        public ProductController(ILogger<ProductController> logger, ClothingShopDbContext context, IProductImageService productImageService, IProductService productService)
         {
             _logger = logger;
             _context = context;
             _productImageService = productImageService;
+            _productService = productService;
         }
-        public async Task<IActionResult> Index(string searchString, int pageNumber = 1, int pageSize = 10)
+        #region
+        //public async Task<IActionResult> Index(string searchString, int pageNumber = 1, int pageSize = 10)
+        //{
+        //    var query = _context.Products
+        //        .Include(p => p.Category)
+        //        .Include(p => p.ProductImages)
+        //        .AsQueryable();
+
+        //    if (!string.IsNullOrEmpty(searchString))
+        //    {
+        //        query = query.Where(s => s.ProductName.Contains(searchString));
+        //    }
+
+        //    var totalItems = await query.CountAsync();
+        //    var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+        //    pageNumber = Math.Max(1, pageNumber);
+        //    pageNumber = Math.Min(pageNumber, totalPages > 0 ? totalPages : 1);
+
+        //    var products = await query
+        //        .OrderBy(s => s.Id)
+        //        .Skip((pageNumber - 1) * pageSize)
+        //        .Take(pageSize)
+        //        .ToListAsync();
+        //    var productGetVModel = products.Select(p => ProductMapping.EntityToVModel(p));
+
+        //    var viewModel = new ProductListViewModel
+        //    {
+        //        Products = productGetVModel,
+        //        PageNumber = pageNumber,
+        //        PageSize = pageSize,
+        //        TotalPages = totalPages,
+        //        TotalItems = totalItems,
+        //        SearchString = searchString
+        //    };
+
+        //    return View(viewModel);
+        //}
+        #endregion
+        public async Task<ActionResult<PaginationModel<ProductGetVModel>>> Index([FromQuery] ProductFilterParams parameters)
         {
-            var query = _context.Products
-                .Include(p => p.Category)
-                .Include(p=>p.ProductImages)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                query = query.Where(s => s.ProductName.Contains(searchString));
-            }
-
-            var totalItems = await query.CountAsync();
-            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-            pageNumber = Math.Max(1, pageNumber);
-            pageNumber = Math.Min(pageNumber, totalPages > 0 ? totalPages : 1);
-
-            var products = await query
-                .OrderBy(s => s.Id)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-            var productGetVModel = products.Select(p => ProductMapping.EntityToVModel(p));
-
-            var viewModel = new ProductListViewModel
-            {
-                Products = productGetVModel,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                TotalPages = totalPages,
-                TotalItems = totalItems,
-                SearchString = searchString
-            };
-
-            return View(viewModel);
+            var response = await _productService.GetAll(parameters);
+            return View(response.Value);
         }
         [HttpGet]
         public IActionResult Create()
@@ -72,29 +83,18 @@ namespace Clothing_shop_v2.Controllers
 
             try
             {
-                // Chuyển từ ViewModel sang Entity
-                var product = ProductMapping.VModelToEntity(model);
-                product.CreatedDate = DateTime.Now;
-                product.UpdatedDate = DateTime.Now;
-
-                // Lưu sản phẩm
-                _context.Products.Add(product);
-                await _context.SaveChangesAsync();
-
-                // Xử lý hình ảnh (VariantId = null vì đây là ảnh của sản phẩm)
-                if (model.imageFiles != null && model.imageFiles.Any())
+                var response = await _productService.Create(model);
+                if (response.IsSuccess)
                 {
-                    var imageResult = await _productImageService.AddImages(product.Id, model.imageFiles);
-                    if (imageResult != "Thêm hình ảnh thành công.")
-                    {
-                        ModelState.AddModelError("imageFiles", imageResult);
-                        ViewBag.Categories = _context.Categories.ToList();
-                        return View(model);
-                    }
+                    TempData["SuccessMessage"] = "Thêm sản phẩm thành công.";
+                    return RedirectToAction("Index");
                 }
-
-                TempData["SuccessMessage"] = $"Sản phẩm '{product.ProductName}' vừa được tạo.";
-                return RedirectToAction("Index");
+                else
+                {
+                    ModelState.AddModelError("", response.Message);
+                    ViewBag.Categories = _context.Categories.ToList();
+                    return View(model);
+                }
             }
             catch (Exception ex)
             {
@@ -223,36 +223,19 @@ namespace Clothing_shop_v2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            var response = await _productService.Delete(id);
+            if (response.IsSuccess)
             {
-                TempData["ErrorMessage"] = "Sản phẩm không tồn tại.";
+                TempData["SuccessMessage"] = response.Message; // Lưu thông báo thành công
                 return RedirectToAction("Index");
             }
-            try
-            {
-                _context.Products.Remove(product);
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"Sản phẩm '{product.ProductName}' đã được xóa.";
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Lỗi khi xóa sản phẩm Id {Id}", id);
-                TempData["ErrorMessage"] = "Không thể xóa sản phẩm.";
-            }
+            ModelState.AddModelError("", response.Message);
             return RedirectToAction("Index");
         }
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var product = _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Variants)
-                .ThenInclude(v => v.Color)
-                .Include(p => p.Variants)
-                .ThenInclude(v => v.Size)
-                .Include(p => p.ProductImages)
-                .FirstOrDefault(p => p.Id == id);
+            var product = await _productService.GetById(id);
             if (product == null)
             {
                 TempData["ErrorMessage"] = "Sản phẩm không tồn tại.";
@@ -265,7 +248,7 @@ namespace Clothing_shop_v2.Controllers
             ViewBag.Colors = await _context.Colors
                 .Select(c => new { c.Id, c.ColorName })
                 .ToListAsync();
-            return View(product);
+            return View(product.Value);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Clothing_shop_v2.VModels.ProductListViewModel
+﻿@model Clothing_shop_v2.Common.Models.PaginationModel<Clothing_shop_v2.VModels.ProductGetVModel>
 
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
@@ -26,7 +26,7 @@
         <form asp-action="Index" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
             <div class="input-group">
                 <input type="text" name="searchString" class="form-control bg-light border-0 small" placeholder="Tìm kiếm sản phẩm..."
-                       aria-label="Search" aria-describedby="basic-addon2" value="@Model.SearchString">
+                       aria-label="Search" aria-describedby="basic-addon2" value="@ViewBag.SearchString">
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit">
                         <i class="fas fa-search fa-sm"></i>
@@ -45,7 +45,6 @@
                     <th>#</th>
                     <th>Tên sản phẩm</th>
                     <th>Ảnh</th>
-                    @* <th>Mô tả</th> *@
                     <th>Danh mục</th>
                     <th>Ngày tạo</th>
                     <th>Ngày cập nhật</th>
@@ -53,10 +52,10 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Products != null && Model.Products.Any())
+                @if (Model != null && Model.Records.Any())
                 {
-                    int index = (Model.PageNumber - 1) * Model.PageSize + 1;
-                    foreach (var product in Model.Products)
+                    int index = (Model.CurrentPage - 1) * Model.PageSize + 1;
+                    foreach (var product in Model.Records)
                     {
                         <tr>
                             <td>@index</td>
@@ -71,18 +70,6 @@
                                     <span class="text-muted">Không có ảnh</span>
                                 }
                             </td>
-                            @* <td>
-                                <div class="description-content" data-full="@Html.Raw(product.Description)">
-                                    @if (!string.IsNullOrEmpty(product.Description))
-                                    {
-                                        @Html.Raw(product.Description.Length > 100 ? product.Description.Substring(0, 100) + "..." : product.Description)
-                                        @if (product.Description.Length > 100)
-                                        {
-                                            <button type="button" class="btn btn-link btn-sm view-more">Xem thêm</button>
-                                        }
-                                    }
-                                </div>
-                            </td> *@
                             <td>@product.Category.CategoryName</td>
                             <td>@product.CreatedDate.ToString("dd-MM-yyyy HH:mm")</td>
                             <td>@(product.UpdatedDate.HasValue ? product.UpdatedDate.Value.ToString("dd-MM-yyyy HH:mm") : "-")</td>
@@ -126,36 +113,45 @@
                 else
                 {
                     <tr>
-                        <td colspan="8" class="text-center text-muted">Không có sản phẩm nào.</td>
+                        <td colspan="7" class="text-center text-muted">Không có sản phẩm nào.</td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
 </div>
+<!-- Debug thông tin phân trang -->
+<div class="debug-info">
+    <p>Total Records: @Model.TotalRecords</p>
+    <p>Page Size: @Model.PageSize</p>
+    <p>Current Page: @Model.CurrentPage</p>
+    <p>Total Pages: @Model.TotalPages</p>
+</div>
 
 <!-- Phân trang -->
-@if (Model.TotalPages > 1)
-{
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString">Trước</a>
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage - 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@ViewBag.SearchString">Trước</a>
+        </li>
+        @for (int i = 1; i <= Math.Max(Model.TotalPages, 1); i++)
+        {
+            <li class="page-item @(Model.CurrentPage == i ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@ViewBag.SearchString">@i</a>
             </li>
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(Model.PageNumber == i ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString">@i</a>
-                </li>
-            }
-            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString">Sau</a>
-            </li>
-        </ul>
-    </nav>
-}
+        }
+        <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+            <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage + 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@ViewBag.SearchString">Sau</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="text-center">
+    <p>Trang @Model.CurrentPage / @Model.TotalPages (Tổng cộng @Model.TotalRecords sản phẩm)</p>
+</div>
 
 <style>
+    /* Giữ nguyên style từ code gốc */
     .table-container {
         overflow-x: auto;
         border-radius: 8px;
@@ -195,69 +191,6 @@
         object-fit: cover;
         border-radius: 4px;
         border: 1px solid #dee2e6;
-    }
-
-    .description-content {
-        max-height: 80px;
-        overflow: hidden;
-        position: relative;
-    }
-
-        .description-content img {
-            max-width: 100px;
-            max-height: 60px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-
-    .view-more {
-        font-size: 0.85rem;
-        padding: 0;
-        color: #007bff;
-    }
-
-        .view-more:hover {
-            text-decoration: underline;
-        }
-
-    .btn-sm {
-        padding: 6px 12px;
-        border-radius: 4px;
-    }
-
-    .btn-warning {
-        background-color: #ffc107;
-        border-color: #ffc107;
-    }
-
-        .btn-warning:hover {
-            background-color: #e0a800;
-            border-color: #e0a800;
-        }
-
-    .btn-danger {
-        background-color: #dc3545;
-        border-color: #dc3545;
-    }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-            border-color: #c82333;
-        }
-
-    .pagination .page-link {
-        border-radius: 4px;
-        margin: 0 2px;
-        color: #007bff;
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
-    }
-
-    .pagination .page-item.disabled .page-link {
-        color: #6c757d;
     }
 
     .action-buttons {
@@ -318,6 +251,21 @@
             transform: scale(1.1);
         }
 
+    .pagination .page-link {
+        border-radius: 4px;
+        margin: 0 2px;
+        color: #007bff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+    }
+
     @@media screen and (max-width: 768px) {
         .table th, .table td {
             padding: 8px;
@@ -328,15 +276,6 @@
             width: 60px;
             height: 60px;
         }
-
-        .description-content {
-            max-height: 60px;
-        }
-
-            .description-content img {
-                max-width: 80px;
-                max-height: 40px;
-            }
 
         .btn-sm {
             padding: 4px 8px;
@@ -384,7 +323,7 @@
 
 @section Scripts {
     <script>
-        // Xử lý nút "Xem thêm" cho cột Mô tả
+        // Xử lý nút "Xem thêm" cho cột Mô tả (nếu cần dùng lại)
         document.querySelectorAll('.view-more').forEach(button => {
             button.addEventListener('click', function () {
                 const contentDiv = this.parentElement;

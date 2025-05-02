@@ -459,12 +459,12 @@
                 table: {
                     contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
                 },
-                simpleUpload: {
-                    uploadUrl: '/api/product/upload-image',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
-                    }
-                }
+                // simpleUpload: {
+                //     uploadUrl: '/api/product/upload-image',
+                //     headers: {
+                //         'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
+                //     }
+                // }
             })
             .then(editor => {
                 editor.model.document.on('change:data', () => {

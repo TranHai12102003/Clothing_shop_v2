@@ -1,4 +1,5 @@
-﻿using Clothing_shop_v2.Models;
+﻿using Clothing_shop_v2.Common.Constants;
+using Clothing_shop_v2.Models;
 
 namespace Clothing_shop_v2.VModels
 {
@@ -30,5 +31,13 @@ namespace Clothing_shop_v2.VModels
         public int TotalPages { get; set; }
         public int TotalItems { get; set; }
         public string? SearchString { get; set; }
+    }
+
+    public class ProductFilterParams
+    {
+        public string? SearchString { get; set; }
+        //public bool? IsActive { get; set; }
+        public int PageSize { get; set; } = Numbers.Pagination.DefaultPageSize;
+        public int PageNumber { get; set; } = Numbers.Pagination.DefaultPageNumber;
     }
 }
