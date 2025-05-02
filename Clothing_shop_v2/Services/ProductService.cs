@@ -107,9 +107,30 @@ namespace Clothing_shop_v2.Services
             return product;
         }
 
-        public Task<ResponseResult> Update(ProductUpdateVModel product)
+        public async Task<ResponseResult> Update(ProductUpdateVModel product)
         {
-            throw new NotImplementedException();
+            var response = new ResponseResult();
+            try
+            {
+                var existingProduct = await _context.Products.FirstOrDefaultAsync(x => x.Id == product.Id);
+                if (existingProduct == null)
+                {
+                    return new ErrorResponseResult("Không tìm thấy sản phẩm");
+                }
+                var updatedProduct = ProductMapping.VModelToEntity(product, existingProduct);
+                _context.Products.Update(updatedProduct);
+                await _context.SaveChangesAsync();
+                if (product.imageFiles != null && product.imageFiles.Count > 0)
+                {
+                    var imageResponse = await _productImageService.AddImages(updatedProduct.Id, product.imageFiles, null);
+                }
+                response = new SuccessResponseResult(updatedProduct, "Cập nhật sản phẩm thành công");
+                return response;
+            }
+            catch (ValidationException ex)
+            {
+                return new ErrorResponseResult(ex.Message);
+            }
         }
 
         private Expression<Func<Product, bool>> BuildQueryable(ProductFilterParams fParams)
