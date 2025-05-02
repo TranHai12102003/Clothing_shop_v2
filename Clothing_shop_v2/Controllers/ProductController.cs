@@ -123,102 +123,136 @@ namespace Clothing_shop_v2.Controllers
             return View(productVModel);
         }
 
+        #region
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Update(int id, ProductUpdateVModel product, List<IFormFile>? imageFiles)
+        //{
+        //    if (id != product.Id)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    try
+        //    {
+        //        // Kiểm tra các trường bắt buộc
+        //        if (string.IsNullOrWhiteSpace(product.ProductName))
+        //        {
+        //            ModelState.AddModelError("ProductName", "Tên sản phẩm không được để trống.");
+        //        }
+
+        //        if (string.IsNullOrWhiteSpace(product.Description))
+        //        {
+        //            ModelState.AddModelError("Description", "Mô tả không được để trống.");
+        //        }
+
+        //        if (product.CategoryId <= 0 || !await _context.Categories.AnyAsync(c => c.Id == product.CategoryId))
+        //        {
+        //            ModelState.AddModelError("CategoryId", "Danh mục không hợp lệ.");
+        //        }
+
+        //        var existingProduct = await _context.Products
+        //            .Include(p => p.ProductImages)
+        //            .FirstOrDefaultAsync(p => p.Id == id);
+        //        if (existingProduct == null)
+        //        {
+        //            TempData["ErrorMessage"] = "Sản phẩm không tồn tại.";
+        //            return RedirectToAction("Index");
+        //        }
+
+        //        // Nếu ModelState không hợp lệ, hiển thị lại form
+        //        if (!ModelState.IsValid)
+        //        {
+        //            ViewBag.Categories = await _context.Categories.ToListAsync();
+        //            ViewBag.ProductImages = await _context.ProductImages
+        //                .Where(pi => pi.ProductId == id && pi.VariantId == null)
+        //                .ToListAsync();
+        //            return View(product);
+        //        }
+
+        //        // Cập nhật thông tin sản phẩm
+        //        existingProduct = ProductMapping.VModelToEntity(product, existingProduct);
+        //        existingProduct.UpdatedDate = DateTime.Now;
+        //        _context.Update(existingProduct);
+        //        await _context.SaveChangesAsync();
+
+        //        // Xử lý ảnh mới nếu có
+        //        if (imageFiles != null && imageFiles.Any())
+        //        {
+        //            // Kiểm tra số lượng ảnh tối đa
+        //            const int maxImages = 5;
+        //            int currentImageCount = existingProduct.ProductImages?.Count ?? 0;
+        //            int newImageCount = imageFiles.Count;
+        //            if (currentImageCount + newImageCount > maxImages)
+        //            {
+        //                ModelState.AddModelError("", $"Sản phẩm chỉ được phép có tối đa {maxImages} ảnh.");
+        //                ViewBag.Categories = await _context.Categories.ToListAsync();
+        //                ViewBag.ProductImages = await _context.ProductImages
+        //                    .Where(pi => pi.ProductId == id && pi.VariantId == null)
+        //                    .ToListAsync();
+        //                return View(product);
+        //            }
+
+        //            // Thêm ảnh mới
+        //            var result = await _productImageService.AddImages(id, imageFiles, null);
+        //            if (result != "Thêm hình ảnh thành công.")
+        //            {
+        //                ModelState.AddModelError("", result);
+        //                ViewBag.Categories = await _context.Categories.ToListAsync();
+        //                ViewBag.ProductImages = await _context.ProductImages
+        //                    .Where(pi => pi.ProductId == id && pi.VariantId == null)
+        //                    .ToListAsync();
+        //                return View(product);
+        //            }
+        //        }
+
+        //        TempData["SuccessMessage"] = $"Sản phẩm '{product.ProductName}' đã được cập nhật.";
+        //        return RedirectToAction("Index");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Lỗi khi cập nhật sản phẩm Id {Id}", id);
+        //        TempData["ErrorMessage"] = "Không thể cập nhật sản phẩm.";
+        //        ViewBag.Categories = await _context.Categories.ToListAsync();
+        //        ViewBag.ProductImages = await _context.ProductImages
+        //            .Where(pi => pi.ProductId == id && pi.VariantId == null)
+        //            .ToListAsync();
+        //        return View(product);
+        //    }
+        //}
+        #endregion
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(int id, ProductUpdateVModel product, List<IFormFile>? imageFiles)
+        public async Task<IActionResult> Update(int id, ProductUpdateVModel product)
         {
             if (id != product.Id)
             {
                 return BadRequest();
             }
-
             try
             {
-                // Kiểm tra các trường bắt buộc
-                if (string.IsNullOrWhiteSpace(product.ProductName))
+                var response = await _productService.Update(product);
+                if (response.IsSuccess)
                 {
-                    ModelState.AddModelError("ProductName", "Tên sản phẩm không được để trống.");
-                }
-
-                if (string.IsNullOrWhiteSpace(product.Description))
-                {
-                    ModelState.AddModelError("Description", "Mô tả không được để trống.");
-                }
-
-                if (product.CategoryId <= 0 || !await _context.Categories.AnyAsync(c => c.Id == product.CategoryId))
-                {
-                    ModelState.AddModelError("CategoryId", "Danh mục không hợp lệ.");
-                }
-
-                var existingProduct = await _context.Products
-                    .Include(p => p.ProductImages)
-                    .FirstOrDefaultAsync(p => p.Id == id);
-                if (existingProduct == null)
-                {
-                    TempData["ErrorMessage"] = "Sản phẩm không tồn tại.";
+                    TempData["SuccessMessage"] = "Cập nhật sản phẩm thành công.";
                     return RedirectToAction("Index");
                 }
-
-                // Nếu ModelState không hợp lệ, hiển thị lại form
-                if (!ModelState.IsValid)
+                else
                 {
+                    ModelState.AddModelError("", response.Message);
                     ViewBag.Categories = await _context.Categories.ToListAsync();
-                    ViewBag.ProductImages = await _context.ProductImages
-                        .Where(pi => pi.ProductId == id && pi.VariantId == null)
-                        .ToListAsync();
                     return View(product);
                 }
-
-                // Cập nhật thông tin sản phẩm
-                existingProduct = ProductMapping.VModelToEntity(product, existingProduct);
-                existingProduct.UpdatedDate = DateTime.Now;
-                _context.Update(existingProduct);
-                await _context.SaveChangesAsync();
-
-                // Xử lý ảnh mới nếu có
-                if (imageFiles != null && imageFiles.Any())
-                {
-                    // Kiểm tra số lượng ảnh tối đa
-                    const int maxImages = 5;
-                    int currentImageCount = existingProduct.ProductImages?.Count ?? 0;
-                    int newImageCount = imageFiles.Count;
-                    if (currentImageCount + newImageCount > maxImages)
-                    {
-                        ModelState.AddModelError("", $"Sản phẩm chỉ được phép có tối đa {maxImages} ảnh.");
-                        ViewBag.Categories = await _context.Categories.ToListAsync();
-                        ViewBag.ProductImages = await _context.ProductImages
-                            .Where(pi => pi.ProductId == id && pi.VariantId == null)
-                            .ToListAsync();
-                        return View(product);
-                    }
-
-                    // Thêm ảnh mới
-                    var result = await _productImageService.AddImages(id, imageFiles, null);
-                    if (result != "Thêm hình ảnh thành công.")
-                    {
-                        ModelState.AddModelError("", result);
-                        ViewBag.Categories = await _context.Categories.ToListAsync();
-                        ViewBag.ProductImages = await _context.ProductImages
-                            .Where(pi => pi.ProductId == id && pi.VariantId == null)
-                            .ToListAsync();
-                        return View(product);
-                    }
-                }
-
-                TempData["SuccessMessage"] = $"Sản phẩm '{product.ProductName}' đã được cập nhật.";
-                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi khi cập nhật sản phẩm Id {Id}", id);
-                TempData["ErrorMessage"] = "Không thể cập nhật sản phẩm.";
+                ModelState.AddModelError("", "Đã có lỗi xảy ra khi cập nhật sản phẩm: " + ex.Message);
                 ViewBag.Categories = await _context.Categories.ToListAsync();
-                ViewBag.ProductImages = await _context.ProductImages
-                    .Where(pi => pi.ProductId == id && pi.VariantId == null)
-                    .ToListAsync();
                 return View(product);
             }
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
