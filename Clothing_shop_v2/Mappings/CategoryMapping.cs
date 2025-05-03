@@ -31,18 +31,19 @@ namespace Shopapp.Mappings
                 ImageUrl = categoryVModel.ImageUrl
             };
         }
-        public static Category VModelToEntity(CategoryUpdateVModel categoryVModel)
+        public static Category VModelToEntity(CategoryUpdateVModel categoryVModel, Category category)
         {
-            return new Category
+            if (category == null)
             {
-                Id = categoryVModel.Id,
-                CategoryName = categoryVModel.CategoryName,
-                ParentCategoryId = categoryVModel.ParentCategoryId,
-                CreatedDate = categoryVModel.CreatedDate,
-                UpdatedDate = DateTime.Now,
-                IsActive = categoryVModel.IsActive,
-                ImageUrl = categoryVModel.ImageUrl
-            };
+                throw new ArgumentNullException(nameof(category));
+            }
+            category.CategoryName = categoryVModel.CategoryName;
+            category.ParentCategoryId = categoryVModel.ParentCategoryId;
+            category.CreatedDate = categoryVModel.CreatedDate;
+            category.UpdatedDate = DateTime.Now;
+            category.IsActive = categoryVModel.IsActive;
+            category.ImageUrl = categoryVModel.ImageUrl;
+            return category;
         }
     }
 }

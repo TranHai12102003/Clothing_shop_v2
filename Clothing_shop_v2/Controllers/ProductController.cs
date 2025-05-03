@@ -263,8 +263,11 @@ namespace Clothing_shop_v2.Controllers
                 TempData["SuccessMessage"] = response.Message; // Lưu thông báo thành công
                 return RedirectToAction("Index");
             }
-            ModelState.AddModelError("", response.Message);
-            return RedirectToAction("Index");
+            else
+            {
+                TempData["ErrorMessage"] = response.Message; // Lưu thông báo lỗi
+                return RedirectToAction("Index");
+            }
         }
         [HttpGet]
         public async Task<IActionResult> Details(int id)

@@ -44,7 +44,6 @@ namespace Clothing_shop_v2.Services
 
         public async Task<ResponseResult> Delete(int id)
         {
-            var response = new ResponseResult();
             try
             {
                 var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
@@ -52,14 +51,25 @@ namespace Clothing_shop_v2.Services
                 {
                     return new ErrorResponseResult("Không tìm thấy sản phẩm");
                 }
+
                 _context.Products.Remove(product);
                 await _context.SaveChangesAsync();
-                response = new SuccessResponseResult(product, "Xóa sản phẩm thành công");
-                return response;
+                return new SuccessResponseResult(product, "Xóa sản phẩm thành công");
             }
             catch (ValidationException ex)
             {
-                return new ErrorResponseResult(ex.Message);
+                return new ErrorResponseResult($"Không thể xóa sản phẩm: {ex.Message}");
+            }
+            catch (DbUpdateException ex)
+            {
+                // Xử lý lỗi khóa ngoại hoặc lỗi database
+                return new ErrorResponseResult("Không thể xóa sản phẩm do có dữ liệu liên quan hoặc lỗi database.");
+            }
+            catch (Exception ex)
+            {
+                // Ghi log lỗi để debug
+                Console.WriteLine($"Lỗi khi xóa sản phẩm ID {id}: {ex}");
+                return new ErrorResponseResult("Đã xảy ra lỗi khi xóa sản phẩm. Vui lòng thử lại sau.");
             }
         }
 
