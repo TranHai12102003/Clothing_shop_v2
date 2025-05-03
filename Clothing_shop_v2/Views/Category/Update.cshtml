@@ -5,90 +5,418 @@
     Layout = "_LayoutAdmin";
 }
 
-<h2>Cập nhật danh mục</h2>
-<div class="container">
-    <form asp-action="Update" enctype="multipart/form-data" method="post">
-        <input type="hidden" asp-for="Id" />
-        <input type="hidden" asp-for="CreatedDate" />
-        <input type="hidden" asp-for="ImageUrl" /> <!-- Gửi ImageUrl cũ -->
-        <div class="form-group">
-            <label asp-for="CategoryName">Tên danh mục</label>
-            <input asp-for="CategoryName" class="form-control" />
-            <span asp-validation-for="CategoryName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="ParentCategoryId">Danh mục cha (nếu có)</label>
-            <select asp-for="ParentCategoryId" class="form-control"
-                    asp-items="ViewBag.ParentCategories">
-                <option value="">-- Không chọn --</option>
-            </select>
-            <span asp-validation-for="ParentCategoryId" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="IsActive">Trạng thái</label>
-            <select asp-for="IsActive" class="form-control">
-                <option value="true" selected="@(Model.IsActive ? "selected" : null)">Hiển thị</option>
-                <option value="false" selected="@(!Model.IsActive ? "selected" : null)">Ẩn</option>
-            </select>
-            <span asp-validation-for="IsActive" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label>Ảnh danh mục</label>
-            <input type="file" name="ImageFile" class="form-control-file" onchange="previewImage(event)" />
-            <span class="text-danger">@Html.ValidationMessage("ImageFile")</span>
-        </div>
-        @if (!string.IsNullOrEmpty(Model.ImageUrl))
-        {
-            <div class="image-preview-container">
-                <img id="imagePreview" class="img-fluid" src="@Model.ImageUrl" alt="Ảnh danh mục" />
-            </div>
-        }
-        else
-        {
-            <div class="image-preview-container">
-                <img id="imagePreview" class="img-fluid" src="#" alt="Ảnh xem trước" style="display:none;" />
-            </div>
-        }
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="fas fa-edit me-2"></i>Cập nhật danh mục</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Thông báo thành công hoặc lỗi -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
 
-        <button type="submit" class="btn btn-success">Cập nhật</button>
-        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-    </form>
+                    <form asp-action="Update" method="post" enctype="multipart/form-data" id="categoryForm">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <!-- Input ẩn để gửi ImageUrl cũ -->
+                        <input type="hidden" name="ExistingImageUrl" id="existingImageUrlInput" value="@Model.ImageUrl" />
+
+                        <div class="mb-3">
+                            <label asp-for="CategoryName" class="form-label fw-bold text-muted">
+                                Tên danh mục <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="CategoryName" class="form-control" placeholder="Nhập tên danh mục..." />
+                            <span asp-validation-for="CategoryName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ParentCategoryId" class="form-label fw-bold text-muted">
+                                Danh mục cha (nếu có)
+                            </label>
+                            <select asp-for="ParentCategoryId" class="form-select" asp-items="ViewBag.ParentCategories">
+                                <option value="">Chọn danh mục cha</option>
+                            </select>
+                            <span asp-validation-for="ParentCategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="IsActive" class="form-label fw-bold text-muted">
+                                Trạng thái <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="IsActive" class="form-select">
+                                <option value="true">Hiển thị</option>
+                                <option value="false">Ẩn</option>
+                            </select>
+                            <span asp-validation-for="IsActive" class="text-danger"></span>
+                        </div>
+
+                        <!-- Trường tải lên hình ảnh -->
+                        <div class="mb-3">
+                            <label asp-for="ImageFile" class="form-label fw-bold text-muted">
+                                Hình ảnh danh mục
+                            </label>
+                            <div class="image-upload-container">
+                                <input asp-for="ImageFile" type="file" accept="image/*" id="imageFileInput" style="display: none;" />
+                                <div class="upload-area" id="uploadArea">
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-muted"></i>
+                                        <p class="mt-2 mb-0">
+                                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                            {
+                                                <span>Thay đổi ảnh bằng cách kéo và thả hoặc <span class="text-primary click-to-upload">nhấn để chọn ảnh</span></span>
+                                            }
+                                            else
+                                            {
+                                                <span>Kéo và thả ảnh vào đây hoặc <span class="text-primary click-to-upload">nhấn để chọn ảnh</span></span>
+                                            }
+                                        </p>
+                                        <small class="text-muted">Chấp nhận .jpg, .jpeg, .png, .gif. Tối đa 5MB.</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <span asp-validation-for="ImageFile" class="text-danger"></span>
+                            <div id="imagePreview" class="row mt-3"></div>
+                        </div>
+
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary btn-custom">
+                                <i class="fas fa-save me-2"></i>Cập nhật
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary btn-custom">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 15px 20px;
+        border-bottom: none;
+    }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+    .card-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        }
+
+    .btn-custom {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-primary.btn-custom {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary.btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-1px);
+        }
+
+    .btn-secondary.btn-custom {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+        .btn-secondary.btn-custom:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+    .d-flex {
+        gap: 10px;
+    }
+
+    /* Image Upload Container */
+    .image-upload-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .upload-area {
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        background-color: #f8f9fa;
+        transition: border-color 0.3s, background-color 0.3s;
+        cursor: pointer;
+    }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #007bff;
+            background-color: #e7f1ff;
+        }
+
+    .upload-placeholder i {
+        font-size: 3rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder p {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    .upload-placeholder .click-to-upload {
+        color: #007bff;
+        text-decoration: underline;
+        cursor: pointer;
+    }
+
+    .upload-placeholder small {
+        display: block;
+        margin-top: 5px;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    /* Image Preview */
+    #imagePreview .preview-image {
+        position: relative;
+        margin-bottom: 15px;
+    }
+
+    #imagePreview img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        transition: transform 0.2s;
+    }
+
+        #imagePreview img:hover {
+            transform: scale(1.05);
+        }
+
+    #imagePreview .remove-image {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        #imagePreview .remove-image:hover {
+            background-color: #c82333;
+            transform: scale(1.1);
+        }
+
+    @@media screen and (max-width: 768px) {
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-custom {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .d-flex {
+            flex-direction: column;
+            gap: 12px !important;
+        }
+
+        .upload-area {
+            padding: 20px;
+        }
+
+        .upload-placeholder i {
+            font-size: 2.5rem;
+        }
+
+        .upload-placeholder p {
+            font-size: 0.9rem;
+        }
+
+        #imagePreview img {
+            height: 120px;
+        }
+
+        #imagePreview .remove-image {
+            width: 24px;
+            height: 24px;
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
 @section Scripts {
-    <script>
-        function previewImage(event) {
-            var input = event.target;
-            var reader = new FileReader();
-
-            reader.onload = function () {
-                var img = document.getElementById('imagePreview');
-                img.src = reader.result;
-                img.style.display = 'block';
-            };
-
-            if (input.files && input.files[0]) {
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
     <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        // Xử lý kéo thả và nhấp để upload
+        const uploadArea = document.getElementById('uploadArea');
+        const imageFileInput = document.getElementById('imageFileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const existingImageUrlInput = document.getElementById('existingImageUrlInput');
+        const existingImageUrl = '@Model.ImageUrl';
 
-    <style>
-        .image-preview-container {
-            margin-top: 10px;
-            text-align: center;
+        // Hiển thị ảnh hiện tại khi trang được tải
+        function initializeImagePreview() {
+            imagePreview.innerHTML = '';
+            if (existingImageUrl) {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'col-md-4 preview-image';
+                previewDiv.innerHTML = `
+                    <img src="${existingImageUrl}" alt="Current Image">
+                    <button type="button" class="remove-image" data-type="existing">×</button>
+                `;
+                imagePreview.appendChild(previewDiv);
+            }
         }
 
-            .image-preview-container img {
-                max-width: 200px; /* Giới hạn chiều rộng */
-                max-height: 200px; /* Giới hạn chiều cao */
-                object-fit: cover; /* Đảm bảo ảnh không bị méo */
-                border-radius: 8px; /* Bo góc */
-                border: 1px solid #ddd; /* Viền nhẹ */
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
-                display: block;
-                margin: 0 auto; /* Căn giữa */
+        initializeImagePreview();
+
+        // Nhấp để chọn file
+        uploadArea.addEventListener('click', () => {
+            imageFileInput.click();
+        });
+
+        // Kéo file vào khu vực
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageFileInput.files = files; // Gán file vào input
+                updateImagePreview(files);
+                existingImageUrlInput.value = ''; // Xóa ảnh cũ khi có ảnh mới
             }
-    </style>
+        });
+
+        // Khi người dùng chọn file qua input
+        imageFileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            if (files.length > 0) {
+                updateImagePreview(files);
+                existingImageUrlInput.value = ''; // Xóa ảnh cũ khi có ảnh mới
+            } else {
+                initializeImagePreview(); // Khôi phục ảnh cũ nếu không chọn ảnh mới
+                existingImageUrlInput.value = existingImageUrl;
+            }
+        });
+
+        // Hàm hiển thị preview ảnh mới
+        function updateImagePreview(files) {
+            imagePreview.innerHTML = '';
+            if (files.length > 0) {
+                const file = files[0]; // Chỉ lấy ảnh đầu tiên
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'col-md-4 preview-image';
+                    previewDiv.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview">
+                        <button type="button" class="remove-image" data-type="new">×</button>
+                    `;
+                    imagePreview.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                initializeImagePreview();
+            }
+        }
+
+        // Xử lý xóa ảnh preview
+        imagePreview.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-image')) {
+                const dataType = e.target.getAttribute('data-type');
+                if (dataType === 'new') {
+                    // Xóa ảnh mới
+                    imageFileInput.value = ''; // Xóa file trong input
+                    initializeImagePreview(); // Khôi phục ảnh cũ
+                    existingImageUrlInput.value = existingImageUrl; // Khôi phục URL cũ
+                } else if (dataType === 'existing') {
+                    // Xóa ảnh cũ
+                    imagePreview.innerHTML = '';
+                    existingImageUrlInput.value = ''; // Xóa URL cũ
+                }
+            }
+        });
+    </script>
+}
