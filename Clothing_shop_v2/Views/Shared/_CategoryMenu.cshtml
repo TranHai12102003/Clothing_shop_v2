@@ -1,0 +1,32 @@
+﻿@model List<Clothing_shop_v2.VModels.CategoryGetVModel>
+<a class="btn shadow-none d-flex align-items-center justify-content-between bg-primary text-white w-100" data-toggle="collapse" href="#navbar-vertical" style="height: 65px; margin-top: -1px; padding: 0 30px;">
+    <h6 class="m-0">Danh mục</h6>
+    <i class="fa fa-angle-down text-dark"></i>
+</a>
+<nav class="collapse show navbar navbar-vertical navbar-light align-items-start p-0 border border-top-0 border-bottom-0" id="navbar-vertical">
+    <div class="navbar-nav w-100 overflow-hidden" style="height: 410px">
+        @{
+            var parentCategories = Model.Where(c => c.ParentCategoryId == null && c.IsActive).ToList();
+            foreach (var parent in parentCategories)
+            {
+                var childCategories = Model.Where(c => c.ParentCategoryId == parent.Id && c.IsActive).ToList();
+                if (childCategories.Any())
+                {
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link" data-toggle="dropdown">@parent.CategoryName <i class="fa fa-angle-down float-right mt-1"></i></a>
+                        <div class="dropdown-menu position-absolute bg-secondary border-0 rounded-0 w-100 m-0">
+                            @foreach (var child in childCategories)
+                            {
+                                <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="@child.Id" class="dropdown-item">@child.CategoryName</a>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="@parent.Id" class="nav-item nav-link">@parent.CategoryName</a>
+                }
+            }
+        }
+    </div>
+</nav>
