@@ -5,24 +5,6 @@
     Layout = "_LayoutAdmin";
 }
 
-<h2>Chi tiết sản phẩm: @Model.ProductName</h2>
-
-<!-- Hiển thị thông báo -->
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-}
-
 <!-- Thông tin sản phẩm -->
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-info text-white">
@@ -65,6 +47,7 @@
     </div>
     <div class="card-body">
         <div class="table-container">
+            <div class="variant-message" style="display: none;"></div>
             <table class="table table-bordered table-hover variant-table" data-product-id="@Model.Id">
                 <thead class="table-dark">
                     <tr>
@@ -109,7 +92,6 @@
         </div>
     </div>
 </div>
-
 <!-- Form thêm biến thể -->
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-primary text-white">
@@ -124,7 +106,7 @@
                 <!-- Kích thước -->
                 <div class="col-md-6 col-lg-4">
                     <label for="SizeId" class="form-label fw-medium">Kích thước <span class="text-danger">*</span></label>
-                    <select id="SizeId" name="SizeId" class="form-select" required>
+                    <select id="SizeId" name="SizeId" class="form-select">
                         <option value="">Chọn kích thước</option>
                         @foreach (var size in ViewBag.Sizes)
                         {
@@ -135,7 +117,7 @@
                 <!-- Màu sắc -->
                 <div class="col-md-6 col-lg-4">
                     <label for="ColorId" class="form-label fw-medium">Màu sắc <span class="text-danger">*</span></label>
-                    <select id="ColorId" name="ColorId" class="form-select" required>
+                    <select id="ColorId" name="ColorId" class="form-select">
                         <option value="">Chọn màu sắc</option>
                         @foreach (var color in ViewBag.Colors)
                         {
@@ -147,7 +129,7 @@
                 <div class="col-md-6 col-lg-4">
                     <label for="Price" class="form-label fw-medium">Giá <span class="text-danger">*</span></label>
                     <div class="input-group">
-                        <input type="number" id="Price" name="Price" class="form-control" step="0.01" min="0" required />
+                        <input type="number" id="Price" name="Price" class="form-control" step="0.01" min="0" />
                     </div>
                 </div>
                 <!-- Giá khuyến mãi -->
@@ -160,7 +142,7 @@
                 <!-- Số lượng tồn -->
                 <div class="col-md-6 col-lg-4">
                     <label for="QuantityInStock" class="form-label fw-medium">Số lượng tồn <span class="text-danger">*</span></label>
-                    <input type="number" id="QuantityInStock" name="QuantityInStock" class="form-control" min="0" required />
+                    <input type="number" id="QuantityInStock" name="QuantityInStock" class="form-control" min="0"  />
                 </div>
                 <!-- Nút Thêm -->
                 <div class="col-12 col-lg-4 d-flex align-items-end">
@@ -438,6 +420,17 @@
         }
     }
 
+    .variant-message {
+        margin-bottom: 15px;
+    }
+
+        .variant-message .alert {
+            margin-bottom: 5px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            padding: 12px 20px;
+        }
+
     @@media screen and (max-width: 576px) {
         .product-image {
             max-width: 120px;
@@ -514,7 +507,12 @@
                             </td>
                         </tr>`;
                         table.querySelector('tr td[colspan="6"]') ? table.innerHTML = row : table.insertAdjacentHTML('beforeend', row);
-                        showAlert(data.message, 'success');
+                        // Hiển thị thông báo thành công trong variant-error
+                        errorDiv.style.display = 'block';
+                        errorDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>${data.message}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
                         e.target.reset();
                     }
                     else {
@@ -593,8 +591,12 @@
                         row.cells[2].textContent = parseFloat(v.price).toLocaleString('vi-VN');
                         row.cells[3].textContent = v.salePrice ? parseFloat(v.salePrice).toLocaleString('vi-VN') : '-';
                         row.cells[4].textContent = v.quantityInStock;
-                        showAlert(data.message, 'success');
-                        bootstrap.Modal.getInstance(document.getElementById('editVariantModal')).hide();
+                        // Hiển thị thông báo thành công trong variant-error
+                        errorDiv.style.display = 'block';
+                        errorDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>${data.message}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
                     } else {
                         errorDiv.style.display = 'block';
                         errorDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -640,6 +642,13 @@
                 const row = document.querySelector(`tr[data-variant-id="${variantId}"]`);
                 const table = row.closest('tbody');
                 const modal = document.getElementById('deleteVariantModal');
+                const tableContainer = row.closest('.table-container');
+                let variantMessageDiv = tableContainer.querySelector('.variant-message');
+                if (!variantMessageDiv) {
+                    variantMessageDiv = document.createElement('div');
+                    variantMessageDiv.className = 'variant-message';
+                    tableContainer.insertBefore(variantMessageDiv, tableContainer.querySelector('table'));
+                }
                 this.disabled = true;
                 this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang xóa...';
 
@@ -654,14 +663,37 @@
                     if (data.success) {
                         row.remove();
                         if (!table.querySelector('tr')) table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Không có biến thể nào.</td></tr>';
-                        showAlert(data.message, 'success');
-                        bootstrap.Modal.getInstance(modal).hide();
+                        variantMessageDiv.style.display = 'block';
+                        variantMessageDiv.innerHTML = `<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>${data.message}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>`;
+                        // Ẩn modal
+                        const modalInstance = bootstrap.Modal.getInstance(modal);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        } else {
+                            console.warn("Không tìm thấy modal instance, ẩn thủ công");
+                            modal.classList.remove('show');
+                            modal.style.display = 'none';
+                            document.body.classList.remove('modal-open');
+                            const backdrop = document.querySelector('.modal-backdrop');
+                            if (backdrop) backdrop.remove();
+                        }
                     } else {
-                        showAlert(data.message || 'Có lỗi xảy ra.', 'danger');
+                        variantMessageDiv.style.display = 'block';
+                        variantMessageDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>${data.message || 'Có lỗi xảy ra.'}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>`;
                     }
                 } catch (error) {
                     console.error("Lỗi:", error);
-                    showAlert('Đã có lỗi xảy ra.', 'danger');
+                    variantMessageDiv.style.display = 'block';
+                    variantMessageDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>Đã có lỗi xảy ra.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>`;
                 } finally {
                     this.disabled = false;
                     this.innerHTML = 'Xóa';
