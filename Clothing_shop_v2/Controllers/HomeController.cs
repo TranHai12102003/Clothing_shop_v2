@@ -50,7 +50,15 @@ namespace Clothing_shop_v2.Controllers
                         ImageUrl = c.ImageUrl,
                         ParentCategoryId = c.ParentCategoryId,
                         IsActive = c.IsActive,
-                    }).ToList()
+                    }).ToList(),
+                Banners = _context.Banners
+                    .Select(b => new BannerGetVModel
+                    {
+                        Id = b.Id,
+                        ImageUrl = b.ImageUrl,
+                        LinkUrl = b.LinkUrl,
+                        IsActive = b.IsActive,
+                    }).ToList(),
             };
             return View(model);
         }
