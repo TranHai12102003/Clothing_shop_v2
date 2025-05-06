@@ -12,6 +12,8 @@ namespace Clothing_shop_v2.Mappings
                 Id = color.Id,
                 ColorName = color.ColorName,
                 ColorCode = color.ColorCode,
+                CreatedDate = color.CreatedDate,
+                UpdatedDate = color.UpdatedDate,
             };
         }
         public static Color VModelToEntity(ColorCreateVModel colorVModel)

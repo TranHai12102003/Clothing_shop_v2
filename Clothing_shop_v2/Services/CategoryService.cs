@@ -76,7 +76,7 @@ namespace Clothing_shop_v2.Services
             IQueryable<Category> query = _context.Categories
                 .Include(x => x.ParentCategory)
                 .Where(BuildQueryable(parameters));
-            var categorys = await query
+            var categories = await query
                 .Skip((parameters.PageNumber - 1) * parameters.PageSize)
                 .Take(parameters.PageSize)
                 .Select(x => CategoryMapping.EntityToVModel(x))
@@ -84,7 +84,7 @@ namespace Clothing_shop_v2.Services
             var totalItems = await query.CountAsync();
             return new PaginationModel<CategoryGetVModel>
             {
-                Records = categorys,
+                Records = categories,
                 TotalRecords = totalItems,
                 PageSize = parameters.PageSize,
                 CurrentPage = parameters.PageNumber

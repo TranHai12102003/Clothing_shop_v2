@@ -1,4 +1,4 @@
-﻿@model Clothing_shop_v2.VModels.ColorListViewModel
+﻿@model Clothing_shop_v2.Common.Models.PaginationModel<Clothing_shop_v2.VModels.ColorGetVModel>
 
 @{
     ViewData["Title"] = "Danh sách màu";
@@ -10,224 +10,378 @@
     @if (TempData["SuccessMessage"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @TempData["SuccessMessage"]
+            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            @TempData["ErrorMessage"]
+            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
-    <!-- Header: Tìm kiếm và nút Thêm màu -->
-    @* <div class="d-flex justify-content-between align-items-center mb-3">
-        <!-- Form tìm kiếm -->
-        <form asp-action="Index" method="get" class="search-container">
+    <div class="header">
+        <h1>Danh sách màu</h1>
+        <span class="results">@Model.TotalRecords/@Model.TotalRecords kết quả</span>
+    </div>
+
+    <div class="actions">
+        <a asp-action="Create" class="btn create-btn"><i class="fas fa-plus"></i> TẠO MỚI</a>
+    </div>
+
+    <div class="search-bar">
+        <form asp-action="Index" method="get" class="search-form">
             <div class="input-group">
-                <input type="text" name="searchString" value="@Model.SearchString" class="form-control search-input" placeholder="Tìm kiếm màu..." aria-label="Search">
-                <span class="search-icon" onclick="this.closest('form').submit();"><i class="fa-solid fa-magnifying-glass"></i></span>
-                @if (!string.IsNullOrEmpty(Model.SearchString))
-                {
-                    <a asp-action="Index" class="btn btn-secondary ms-2">Xóa bộ lọc</a>
-                }
+                <input type="text" name="searchString" class="search-input" placeholder="Tìm kiếm màu..." value="@Context.Request.Query["SearchString"]">
+                <button type="submit" class="search-btn"><i class="fas fa-search fa-sm"></i></button>
             </div>
-        </form>
-
-        <!-- Nút Thêm màu -->
-        <a asp-action="Create" class="btn btn-primary btn-create"><i class="fa-solid fa-plus"></i> Thêm màu</a>
-    </div> *@
-    <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <form asp-action="Index" method="get" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                <div class="input-group">
-                    <input type="text" name="searchString" class="form-control bg-light border-0 small" placeholder="Tìm kiếm sản phẩm..."
-                           aria-label="Search" aria-describedby="basic-addon2" value="@Model.SearchString">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-search fa-sm"></i>
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <a asp-action="Create" class="btn btn-primary ms-2"><i class="fas fa-plus"></i> Tạo mới</a>
-        </div>
-
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Tên màu</th>
-                <th>Mã màu</th>
-                <th>Ngày tạo</th>
-                <th>Ngày cập nhật</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var color in Model.Colors)
+            @if (!string.IsNullOrEmpty(Context.Request.Query["SearchString"]))
             {
-                <tr>
-                    <td>@color.Id</td>
-                    <td>@color.ColorName</td>
-                    <td>
-                        <span class="color-circle" style="background-color: @color.ColorCode;"></span>
-                        @color.ColorCode
-                    </td>
-                    <td>@color.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@(color.UpdatedDate?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
-                    <td>
-                        <a asp-action="Update" asp-route-id="@color.Id" class="btn btn-warning btn-sm">Sửa</a>
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-@color.Id">
-                            Xóa
-                        </button>
+                <a asp-action="Index" asp-route-pageSize="@Model.PageSize" class="clear-filter-btn">XÓA BỘ LỌC</a>
+            }
+        </form>
+    </div>
 
-                        <!-- Delete Modal -->
-                        <div class="modal fade" id="deleteModal-@color.Id" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-danger text-white">
-                                        <h5 class="modal-title">Xác nhận xóa</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Bạn chắc chắn muốn xóa màu "@color.ColorName"?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                        <form asp-action="Delete" method="post">
-                                            <input type="hidden" name="id" value="@color.Id" />
-                                            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
-                                        </form>
+    <!-- Bao bọc bảng trong một div để thêm thanh cuộn ngang -->
+    <div class="table-wrapper">
+        <table class="table-custom">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Tên màu</th>
+                    <th>Mã màu</th>
+                    <th>Ngày tạo</th>
+                    <th>Ngày cập nhật</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Records != null && Model.Records.Any())
+                {
+                    foreach (var color in Model.Records)
+                    {
+                        <tr>
+                            <td>@color.Id</td>
+                            <td>@color.ColorName</td>
+                            <td>
+                                <span class="color-circle" style="background-color: @color.ColorCode;"></span>
+                                @color.ColorCode
+                            </td>
+                            <td>@color.CreatedDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@(color.UpdatedDate?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                            <td class="actions-cell">
+                                <a asp-action="Update" asp-route-id="@color.Id" class="btn action-btn">✏️</a>
+                                <button type="button" class="btn action-btn status" data-bs-toggle="modal" data-bs-target="#deleteModal-@color.Id">✖️</button>
+
+                                <!-- Delete Modal -->
+                                <div class="modal fade" id="deleteModal-@color.Id" tabindex="-1" aria-labelledby="deleteModalLabel-@color.Id" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title" id="deleteModalLabel-@color.Id">Xác nhận xóa</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Bạn chắc chắn muốn xóa màu "@color.ColorName"?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                <form asp-action="Delete" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@color.Id" />
+                                                    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                                </form>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6" class="text-center text-muted">Không có màu nào.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 
     <!-- Phân trang -->
-    <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <!-- Trang trước -->
-            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString"><i class="fa-solid fa-arrow-left"></i></a>
-            </li>
-
-            <!-- Số trang -->
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString">@i</a>
-                </li>
-            }
-
-            <!-- Trang sau -->
-            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
-                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Model.SearchString"><i class="fa-solid fa-arrow-right"></i></a>
-            </li>
-        </ul>
-    </nav>
-    <div class="text-center">
-        <p>Trang @Model.PageNumber / @Model.TotalPages (Tổng cộng @Model.TotalItems màu)</p>
+    <div class="pagination">
+        <span>Rows per page:</span>
+        <form asp-action="Index" method="get" class="d-inline">
+    <input type="hidden" name="searchString" value="@Context.Request.Query["searchString"]" />
+    <input type="hidden" name="pageNumber" value="1" />
+            <select name="pageSize" onchange="this.form.submit()">
+                @{
+                    var pageSizes = new[] { 5, 10, 15 };
+                    foreach (var size in pageSizes)
+                    {
+                        if (size == Model.PageSize)
+                        {
+                            <option value="@size" selected>@size</option>
+                        }
+                        else
+                        {
+                            <option value="@size">@size</option>
+                        }
+                    }
+                }
+            </select>
+</form>
+        <span>@((Model.CurrentPage - 1) * Model.PageSize + 1)-@(Model.CurrentPage * Model.PageSize > Model.TotalRecords ? Model.TotalRecords : Model.CurrentPage * Model.PageSize) of @Model.TotalRecords</span>
+        <a class="page-btn @(Model.CurrentPage == 1 ? "disabled" : "")" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage - 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Context.Request.Query["SearchString"]"><</a>
+        <a class="page-btn @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage + 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Context.Request.Query["SearchString"]">></a>
     </div>
 </div>
 
-    <style>
-        /* Phân trang */
-        .pagination .page-link {
-            color: #007bff;
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    .header .results {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .actions .create-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        background-color: #007bff;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.1s ease;
+        text-decoration: none;
+    }
+
+    .actions .create-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .search-bar .search-form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .search-bar .input-group {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 10px;
+    }
+
+    .search-bar .search-input {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        flex-grow: 1;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        color: #888;
+    }
+
+    .search-bar .search-btn,
+    .search-bar .clear-filter-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 20px;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        font-weight: bold;
+        transition: transform 0.1s ease;
+        text-decoration: none;
+    }
+
+    .search-bar .search-btn:hover,
+    .search-bar .clear-filter-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .search-bar .search-btn {
+        background-color: #007bff;
+        color: white;
+    }
+
+    /* Thêm thanh cuộn ngang cho bảng */
+    .table-wrapper {
+        overflow-x: auto;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-custom {
+        width: 100%;
+        min-width: 800px;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-custom th,
+    .table-custom td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap;
+    }
+
+    .table-custom th {
+        background-color: #f9f9f9;
+        font-weight: bold;
+    }
+
+    /* Ô tròn hiển thị màu */
+    .color-circle {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+        border: 1px solid #dee2e6;
+    }
+
+    .actions-cell .action-btn {
+        border: none;
+        background: none;
+        cursor: pointer;
+        margin-right: 5px;
+        font-size: 16px;
+    }
+
+    .actions-cell .status {
+        color: #ff0000;
+        font-weight: bold;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .pagination select {
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .pagination span {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .pagination .page-btn {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .pagination .page-btn.disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    /* Responsive */
+    @@media screen and (max-width: 768px) {
+        .header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
         }
 
-        .pagination .page-item.active .page-link {
-            background-color: #007bff;
-            border-color: #007bff;
+        .actions {
+            flex-direction: column;
+            width: 100%;
         }
 
-        .pagination .page-item.disabled .page-link {
-            color: #6c757d;
-            pointer-events: none;
+        .actions .create-btn {
+            width: 100%;
+            text-align: center;
         }
 
-        /* Tìm kiếm và nút Thêm màu */
-        .search-container {
-            max-width: 400px; /* Giới hạn chiều rộng ô tìm kiếm */
-            position: relative;
+        .search-bar {
+            flex-direction: column;
+            width: 100%;
         }
 
-        .search-input {
-            padding-right: 40px; /* Để lại khoảng trống cho biểu tượng */
-            border-radius: 4px;
-            border: 1px solid #ced4da;
-            transition: border-color 0.2s;
+        .search-bar .search-form {
+            width: 100%;
         }
 
-            .search-input:focus {
-                border-color: #007bff;
-                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-            }
-
-        .search-icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #6c757d;
-            font-size: 1.1rem;
+        .search-bar .input-group {
+            width: 100%;
         }
 
-            .search-icon:hover {
-                color: #007bff;
-            }
-
-        /* Nút Thêm màu */
-        .btn-create {
-            padding: 8px 16px;
-            font-size: 1rem;
-            border-radius: 4px;
-            transition: background-color 0.2s;
+        .search-bar .search-input {
+            width: 100%;
         }
 
-            .btn-create:hover {
-                background-color: #0056b3;
-            }
-
-            .btn-create i {
-                margin-right: 5px;
-            }
-
-        /* Ô tròn hiển thị màu */
-        .color-circle {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            margin-right: 8px;
-            vertical-align: middle;
-            border: 1px solid #dee2e6; /* Viền nhẹ để màu sáng (như trắng) rõ hơn */
+        .search-bar .search-btn,
+        .search-bar .clear-filter-btn {
+            width: 100%;
+            text-align: center;
         }
 
-        /* Responsive */
-        @@media screen and (max-width: 768px) {
-            .search-container {
-                max-width: 100%; /* Full width trên mobile */
-                margin-bottom: 10px;
-            }
-
-            .btn-create {
-                width: 100%; /* Full width trên mobile */
-                text-align: center;
-            }
-
-            .d-flex {
-                flex-direction: column; /* Xếp dọc trên mobile */
-                align-items: stretch;
-            }
+        .pagination {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
         }
-    </style>
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Tự động ẩn thông báo sau 3 giây
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                setTimeout(() => {
+                    const alertInstance = bootstrap.Alert.getOrCreateInstance(alert);
+                    if (alertInstance) alertInstance.close();
+                    else alert.remove();
+                }, 3000);
+            });
+        });
+    </script>
+}

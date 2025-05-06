@@ -1,76 +1,214 @@
 ﻿@model Clothing_shop_v2.VModels.ColorUpdateVModel
 
 @{
-    ViewData["Title"] = "Cập nhật màu";
+    ViewData["Title"] = "Cập nhật màu mới";
     Layout = "_LayoutAdmin";
 }
 
-<h2>Tạo màu mới</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Cập nhật màu mới</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Thông báo thành công hoặc lỗi -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
 
-<form asp-action="Update" method="post">
-    <input type="hidden" asp-for="Id" />
-    <div class="mb-3">
-        <label asp-for="ColorName" class="form-label">Tên màu</label>
-        <input asp-for="ColorName" class="form-control" />
-        <span asp-validation-for="ColorName" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="ColorCode" class="form-label">Mã màu</label>
-        <div class="input-group">
-            <input asp-for="ColorCode" class="form-control colorpicker" readonly />
-            <span class="input-group-text"><i class="fas fa-square" id="color-preview"></i></span>
+                    <form asp-action="Update" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="mb-3">
+                            <label asp-for="ColorName" class="form-label fw-bold text-muted">
+                                Tên màu <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="ColorName" class="form-control" placeholder="Nhập tên màu..." />
+                            <span asp-validation-for="ColorName" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="ColorCode" class="form-label fw-bold text-muted">
+                                Mã màu <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="ColorCode" class="form-control colorpicker" placeholder="Nhập mã màu (VD: #FF0000)" />
+                                <span class="input-group-text"><i class="fas fa-square" id="color-preview"></i></span>
+                            </div>
+                            <span asp-validation-for="ColorCode" class="text-danger"></span>
+                        </div>
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-primary btn-custom">
+                                <i class="fas fa-save me-2"></i>Cập nhật
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary btn-custom">
+                                <i class="fas fa-arrow-left me-2"></i>Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <span asp-validation-for="ColorCode" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Cập nhật</button>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-</form>
+</div>
 
-    <style>
-        .colorpicker {
-            border-radius: 4px 0 0 4px; /* Bo góc bên trái */
+<style>
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 15px 20px;
+        border-bottom: none;
+    }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
         }
 
-        #color-preview {
-            color: #000000; /* Màu mặc định */
-            font-size: 1.2rem;
+    .card-body {
+        padding: 30px;
+    }
+
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
         }
 
-        .input-group-text {
-            background-color: #fff;
-            border-left: 0;
-            border-radius: 0 4px 4px 0; /* Bo góc bên phải */
+    .input-group-text {
+        background-color: #fff;
+        border-left: 0;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .colorpicker {
+        border-radius: 6px 0 0 6px;
+    }
+
+    #color-preview {
+        color: #000000;
+        font-size: 1.2rem;
+    }
+
+    .btn-custom {
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-primary.btn-custom {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-primary.btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+            transform: translateY(-1px);
         }
 
-        .colorpicker[readonly] {
-            background-color: #f8f9fa; /* Nền nhạt khi readonly */
-            cursor: pointer; /* Con trỏ chuột như nút */
-        }
-    </style>
+    .btn-secondary.btn-custom {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
 
+        .btn-secondary.btn-custom:hover {
+            background-color: #5a6268;
+            border-color: #5a6268;
+            transform: translateY(-1px);
+        }
+
+    .d-flex {
+        gap: 10px;
+    }
+
+    /* Responsive */
+    @@media screen and (max-width: 768px) {
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-label {
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-custom {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .d-flex {
+            flex-direction: column;
+            gap: 12px;
+        }
+    }
+</style>
 
 @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
-        <script>
-            $(document).ready(function () {
-                $('.colorpicker').colorpicker({
-                    format: 'hex', // Định dạng mã màu hex
-                    colorSelectors: { // Danh sách mã màu cố định
-                        '#FF0000': 'Đỏ',
-                        '#00FF00': 'Xanh lá',
-                        '#0000FF': 'Xanh dương',
-                        '#FFFF00': 'Vàng',
-                        '#000000': 'Đen',
-                        '#FFFFFF': 'Trắng'
-                    },
-                    autoInputFallback: true // Tự động cập nhật input
-                }).on('colorpickerChange', function (e) {
-                    $('#color-preview').css('color', e.color.toString());
-                });
-
-                // Cập nhật preview khi load
-                $('#color-preview').css('color', $('.colorpicker').val() || '#000000');
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-colorpicker@3.4.0/dist/js/bootstrap-colorpicker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Khởi tạo colorpicker nhưng không để nó can thiệp khi nhập tay
+            $('.colorpicker').colorpicker({
+                format: 'hex',
+                autoInputFallback: false,
+                fallbackColor: false,
+                colorSelectors: {
+                    '#FF0000': 'Đỏ',
+                    '#00FF00': 'Xanh lá',
+                    '#0000FF': 'Xanh dương',
+                    '#FFFF00': 'Vàng',
+                    '#000000': 'Đen',
+                    '#FFFFFF': 'Trắng'
+                }
             });
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap-colorpicker@3.4.0/dist/js/bootstrap-colorpicker.min.js"></script>
+
+            // Chỉ cập nhật preview khi giá trị hợp lệ
+            $('.colorpicker').on('input', function () {
+                const color = $(this).val();
+                if (/^#[0-9A-Fa-f]{6}$/.test(color)) {
+                    $('#color-preview').css('color', color);
+                }
+            });
+
+            // Cập nhật màu ban đầu
+            const initialColor = $('.colorpicker').val() || '#000000';
+            $('#color-preview').css('color', initialColor);
+        });
+    </script>
 }
