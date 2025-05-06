@@ -63,6 +63,7 @@ builder.Services.AddScoped<ICustomerTypeService, CustomerTypeService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IVariantService, VariantService>();
+builder.Services.AddScoped<IColorService, ColorService>();
 
 var app = builder.Build();
 
