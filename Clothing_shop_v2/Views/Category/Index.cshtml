@@ -114,18 +114,32 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Phân trang -->
+    <!--Phân trang -->
     <div class="pagination">
         <span>Rows per page:</span>
-        <select asp-for="PageSize" onchange="this.form.submit()">
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-        </select>
+        <form asp-action="Index" method="get" class="d-inline">
+            <input type="hidden" name="searchString" value="@Context.Request.Query["searchString"]" />
+            <input type="hidden" name="pageNumber" value="1" />
+            <select name="pageSize" onchange="this.form.submit()">
+                @{
+                    var pageSizes = new[] { 5, 10, 15 };
+                    foreach (var size in pageSizes)
+                    {
+                        if (size == Model.PageSize)
+                        {
+                            <option value="@size" selected>@size</option>
+                        }
+                        else
+                        {
+                            <option value="@size">@size</option>
+                        }
+                    }
+                }
+            </select>
+        </form>
         <span>@((Model.CurrentPage - 1) * Model.PageSize + 1)-@(Model.CurrentPage * Model.PageSize > Model.TotalRecords ? Model.TotalRecords : Model.CurrentPage * Model.PageSize) of @Model.TotalRecords</span>
-        <a class="page-btn @(Model.CurrentPage == 1 ? "disabled" : "")" asp-action="Index" asp-route-PageNumber="@(Model.CurrentPage - 1)" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@Context.Request.Query["SearchString"]" asp-route-IsActive="@Context.Request.Query["IsActive"]"><</a>
-        <a class="page-btn @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")" asp-action="Index" asp-route-PageNumber="@(Model.CurrentPage + 1)" asp-route-PageSize="@Model.PageSize" asp-route-SearchString="@Context.Request.Query["SearchString"]" asp-route-IsActive="@Context.Request.Query["IsActive"]">></a>
+        <a class="page-btn @(Model.CurrentPage == 1 ? "disabled" : "")" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage - 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Context.Request.Query["SearchString"]"><</a>
+        <a class="page-btn @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")" asp-action="Index" asp-route-pageNumber="@(Model.CurrentPage + 1)" asp-route-pageSize="@Model.PageSize" asp-route-searchString="@Context.Request.Query["SearchString"]">></a>
     </div>
 </div>
 
