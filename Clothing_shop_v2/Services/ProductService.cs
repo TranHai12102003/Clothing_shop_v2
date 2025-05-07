@@ -78,6 +78,7 @@ namespace Clothing_shop_v2.Services
             IQueryable<Product> query = _context.Products
                 .Include(p => p.Category)
                 .Include(p=>p.ProductImages)
+                .Include(p => p.Variants)
                 .Where(BuildQueryable(parameters));
 
             var promotions = await query

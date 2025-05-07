@@ -26,6 +26,16 @@ namespace Clothing_shop_v2.Mappings
                 vmodel.PrimaryImageUrl = product.ProductImages?.FirstOrDefault(pi => pi.IsPrimary)?.ImageUrl
                          ?? product.ProductImages?.FirstOrDefault()?.ImageUrl;//Tìm ảnh chính nếu không có sẽ lấy ảnh đầu tiên tìm thấy
             }
+            if (product.Variants != null && product.Variants.Count > 0)
+            {
+                vmodel.Price = product.Variants
+                    .Where(v=>v.Price > 0)
+                    .Min(v => v.Price);
+            }
+            else
+            {
+                vmodel.Price = 0;
+            }
             return vmodel;
         }
         public static Product VModelToEntity(ProductCreateVModel productVModel)

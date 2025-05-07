@@ -32,15 +32,15 @@ namespace Clothing_shop_v2.Controllers
         {
             var model = new HomeVModel
             {
+                //CÓ thể gọi hàm ở Product Service (sẽ dùng sau)
                 Products = _context.Products
-                    .Include(p => p.Category)
-                    .Select(p => new ProductGetVModel
-                    {
-                        Id = p.Id,
-                        ProductName = p.ProductName,
-                        PrimaryImageUrl = p.ProductImages.FirstOrDefault(p => p.IsPrimary == true).ImageUrl,
-                        CategoryId = p.CategoryId
-                    }).ToList(),
+                .Include(p => p.Category)
+                .Include(p => p.ProductImages)
+                .Include(p => p.Variants)
+                .AsEnumerable()
+                .Select(p => ProductMapping.EntityToVModel(p))
+                .ToList(),
+
                 Categories = _context.Categories
                     //.Include(c=>c.ParentCategory)
                     .Select(c => new CategoryGetVModel
