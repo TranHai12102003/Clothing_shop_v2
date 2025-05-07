@@ -64,6 +64,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IVariantService, VariantService>();
 builder.Services.AddScoped<IColorService, ColorService>();
+builder.Services.AddScoped<IVoucherService, VoucherService>();
 
 var app = builder.Build();
 
